@@ -1,0 +1,9 @@
+{
+  "mcHost": "localhost",
+  "mcPort": 25565,
+  "mcVersion": "1.21",
+  "wsPort": 3001,
+  "stepMs": 50,
+  "maxSteps": 2000,
+  "botUsername": "DIDDYBOT"
+}
