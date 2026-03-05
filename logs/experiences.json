@@ -1,211 +1,3751 @@
 [
   {
-    "session": 26,
-    "time": "3:50:25 PM",
-    "action": "seek_food",
-    "target": "[-112,59,151]",
-    "result": "success",
-    "details": "Completed seek_food",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 1
-  },
-  {
-    "session": 26,
-    "time": "3:50:51 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed mine_wood",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 22
-  },
-  {
-    "session": 26,
-    "time": "3:51:17 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed mine_wood",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 13
-  },
-  {
-    "session": 26,
-    "time": "3:51:38 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed mine_wood",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 13
-  },
-  {
-    "session": 26,
-    "time": "3:52:03 PM",
+    "time": "7:40:43 PM",
     "action": "craft",
-    "target": "-187,-57,633",
+    "target": "planks",
     "result": "success",
-    "details": "Completed craft",
-    "gained": {},
-    "lost": {
-      "oak_log": 5
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 13
-  },
-  {
-    "session": 26,
-    "time": "3:52:34 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {},
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 8
-  },
-  {
-    "session": 26,
-    "time": "3:53:04 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {},
-    "lost": {
-      "oak_log": 5
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 0
-  },
-  {
-    "session": 27,
-    "time": "11:28:46 PM",
-    "action": "craft",
-    "target": "x=-190, y=63, z=149",
-    "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "oak_planks": 4
+      "spruce_log": 16,
+      "spruce_planks": 36
     },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 809,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 27,
-    "time": "11:29:08 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
     "lost": {},
     "healthBefore": 20,
     "healthAfter": 20,
-    "durationMs": 819,
+    "durationMs": 70,
     "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "day",
       "hasHostiles": 0,
       "equipped": "none"
     }
   },
   {
-    "session": 27,
-    "time": "11:29:30 PM",
+    "time": "7:40:55 PM",
+    "action": "craft",
+    "target": "planks and sticks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 32,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:41:07 PM",
+    "action": "craft",
+    "target": "stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 28,
+      "stick": 64
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 136,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:41:19 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 19025,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:41:47 PM",
     "action": "craft",
     "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 12
+    },
+    "lost": {
+      "spruce_log": 1
+    },
     "healthBefore": 20,
     "healthAfter": 20,
-    "durationMs": 815,
+    "durationMs": 29,
     "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "crafting_table"
-    }
-  },
-  {
-    "session": 27,
-    "time": "11:29:53 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 840,
-    "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "day",
       "hasHostiles": 0,
       "equipped": "none"
     }
   },
   {
-    "session": 27,
-    "time": "11:30:14 PM",
+    "time": "7:41:58 PM",
     "action": "craft",
-    "target": "-187,-57,633",
+    "target": "wooden_pickaxe",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "oak_planks": 4
+      "wooden_pickaxe": 1
     },
     "lost": {
-      "oak_log": 1
+      "crafting_table": 1,
+      "stick": 2,
+      "spruce_planks": 3
     },
     "healthBefore": 20,
     "healthAfter": 20,
-    "durationMs": 811,
+    "durationMs": 1147,
     "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "day",
       "hasHostiles": 0,
-      "equipped": "oak_planks"
+      "equipped": "none"
     }
   },
   {
-    "session": 27,
-    "time": "11:30:35 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
+    "time": "7:42:10 PM",
+    "action": "mine_wood",
+    "target": "log",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 18317,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:42:38 PM",
+    "action": "mine_wood",
+    "target": "spruce_log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 4
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 17122,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:43:04 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 4
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 17250,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:43:32 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 4
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 43654,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:44:17 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_pickaxe": 1
+    },
+    "lost": {
+      "stick": 2,
+      "spruce_planks": 3
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 710,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:44:29 PM",
+    "action": "craft",
+    "target": "crafting_table",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 28,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:44:41 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 48,
+      "spruce_log": 44
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 37,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:44:53 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_axe": 1
+    },
+    "lost": {
+      "spruce_planks": 3,
+      "stick": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 12,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:45:05 PM",
+    "action": "craft",
+    "target": "wooden_sword",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_sword": 1
+    },
+    "lost": {
+      "stick": 1,
+      "spruce_planks": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 45,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:45:17 PM",
+    "action": "craft",
+    "target": "wooden_shovel",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_shovel": 1
+    },
+    "lost": {
+      "spruce_planks": 1,
+      "stick": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 69,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:45:29 PM",
+    "action": "build_shelter",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {
+      "spruce_planks": 28
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 67806,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:46:38 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20009,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_planks"
+    }
+  },
+  {
+    "time": "7:46:59 PM",
+    "action": "explore",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15048,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_planks"
+    }
+  },
+  {
+    "time": "7:47:14 PM",
+    "action": "explore",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15114,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_planks"
+    }
+  },
+  {
+    "time": "7:47:32 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 4,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_planks"
+    }
+  },
+  {
+    "time": "7:47:44 PM",
+    "action": "explore",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 4,
+    "healthAfter": 0,
+    "durationMs": 1935,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_planks"
+    }
+  },
+  {
+    "time": "7:48:02 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 41904,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:50:48 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 48761,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:51:39 PM",
+    "action": "mine_wood",
+    "target": "wood",
+    "result": "fail",
+    "details": "No logs gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 46763,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:52:27 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 65363,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:53:33 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No logs gathered",
+    "gained": {
+      "stick": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 76394,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:54:51 PM",
+    "action": "mine_wood",
+    "target": "spruce_log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "spruce_log": 6,
+      "stick": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 52879,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:56:25 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No logs gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 40752,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:57:06 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 13446,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:57:33 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 5
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15749,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:58:01 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 13440,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:58:27 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 16,
+      "spruce_planks": 24
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 58,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:59:07 PM",
+    "action": "craft",
+    "target": "stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "stick": 60
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 127,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 1,
+      "equipped": "spruce_log"
+    }
+  },
+  {
+    "time": "7:59:18 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 5
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 14483,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_log"
+    }
+  },
+  {
+    "time": "7:59:46 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 20
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 29,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "7:59:58 PM",
+    "action": "craft",
+    "target": "crafting_table",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 11,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:00:10 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20044,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:00:31 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15040,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:00:58 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20050,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:01:20 PM",
+    "action": "craft",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "spruce_planks": 20,
+      "stick": 64,
+      "crafting_table": 1,
+      "spruce_log": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 17469,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:01:40 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No logs gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 13914,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:02:07 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 22
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15126,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:02:25 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2,
+      "spruce_planks": 64
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 328,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:02:37 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 14650,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:03:04 PM",
+    "action": "mine_wood",
+    "target": "None",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 46255,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:03:52 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 11,
+      "spruce_planks": 96
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 12,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:04:04 PM",
+    "action": "craft",
+    "target": "stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "stick": 172
+    },
+    "lost": {
+      "spruce_planks": 26
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 405,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:04:16 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 6.5,
+    "healthAfter": 0,
+    "durationMs": 3525,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:04:50 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 8
+    },
+    "lost": {
+      "spruce_log": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 10,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:05:01 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 4
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 23063,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:05:29 PM",
+    "action": "craft",
+    "target": "planks, stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 126,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:05:40 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 30185,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:06:14 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 16381,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:06:41 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 32,
+      "spruce_log": 8
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 64,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:06:53 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No logs gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 34494,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:07:30 PM",
+    "action": "craft",
+    "target": "planks, stick",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 82,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:07:41 PM",
+    "action": "craft",
+    "target": "stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 22,
+      "stick": 76
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 169,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:07:53 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_sapling": 1,
+      "spruce_log": 10
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 23494,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:08:21 PM",
+    "action": "craft",
+    "target": "sticks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 18,
+      "spruce_planks": 36
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 76,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:08:32 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_pickaxe": 1
+    },
+    "lost": {
+      "crafting_table": 1,
+      "stick": 2,
+      "spruce_planks": 3
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 6945,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:08:44 PM",
+    "action": "craft",
+    "target": "crafting_table",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 9,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:08:57 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 28,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:09:08 PM",
+    "action": "craft",
+    "target": "wooden_axe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_axe": 1
+    },
+    "lost": {
+      "spruce_planks": 3,
+      "stick": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 107,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "spruce_log"
+    }
+  },
+  {
+    "time": "8:09:20 PM",
+    "action": "craft",
+    "target": "wooden_sword",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_sword": 1
+    },
+    "lost": {
+      "stick": 1,
+      "spruce_planks": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 1050,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:09:33 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 7,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:09:44 PM",
+    "action": "craft",
+    "target": "wooden_shovel",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_shovel": 1
+    },
+    "lost": {
+      "spruce_planks": 1,
+      "stick": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:09:56 PM",
+    "action": "build_shelter",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "stick": 1
+    },
+    "lost": {
+      "spruce_planks": 27,
+      "spruce_log": 3
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 62374,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:11:00 PM",
+    "action": "craft",
+    "target": "wooden pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 38589,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:11:42 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 52398,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "wooden_axe"
+    }
+  },
+  {
+    "time": "8:12:36 PM",
+    "action": "mine_wood",
+    "target": "[31,66,0]",
+    "result": "fail",
+    "details": "No logs gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 47777,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "wooden_axe"
+    }
+  },
+  {
+    "time": "8:13:28 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "wooden_pickaxe": 1,
+      "stick": 74,
+      "crafting_table": 1,
+      "wooden_shovel": 1,
+      "spruce_sapling": 1,
+      "wooden_sword": 1,
+      "wooden_axe": 1,
+      "spruce_log": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 14983,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "wooden_axe"
+    }
+  },
+  {
+    "time": "8:49:14 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 1.1666679382324219,
+    "durationMs": 39850,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 1,
+      "equipped": "spruce_log"
+    }
+  },
+  {
+    "time": "8:49:56 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 1.1666679382324219,
+    "healthAfter": 1.1666679382324219,
+    "durationMs": 84644,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:51:23 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 1.1666679382324219,
+    "healthAfter": 1.1666679382324219,
+    "durationMs": 13455,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:51:56 PM",
+    "action": "mine_wood",
+    "target": "[11,63,-26]",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 1.1666679382324219,
+    "healthAfter": 1.1666679382324219,
+    "durationMs": 16866,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:52:32 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 1.1666679382324219,
+    "healthAfter": 0,
+    "durationMs": 7896,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:53:35 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 21890,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:54:01 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 13755,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:54:28 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 5
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15140,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:54:56 PM",
+    "action": "mine_wood",
+    "target": "[11,63,-26]",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 17892,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:55:22 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 27,
+      "spruce_planks": 44
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 92,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:55:35 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 32,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:55:46 PM",
+    "action": "craft",
+    "target": "stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_planks": 22,
+      "stick": 76
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 163,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:55:58 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_sapling": 1,
+      "spruce_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 36376,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:56:52 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 6
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 26372,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:57:22 PM",
+    "action": "craft",
+    "target": "planks",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 8,
+      "spruce_planks": 24
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 26,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:57:35 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 27182,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:58:04 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20027,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:58:25 PM",
+    "action": "craft",
+    "target": "pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20022,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:58:46 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20023,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:59:07 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20022,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:59:28 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20021,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "8:59:49 PM",
+    "action": "craft",
+    "target": "pickaxe, axe, sword, shovel",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20033,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:00:10 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20026,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:00:31 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20026,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:00:52 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20038,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:01:13 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe, axe, sword, shovel",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20027,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:01:34 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20032,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:01:56 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 19.499998092651367,
+    "durationMs": 20028,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:02:16 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 19.499998092651367,
+    "healthAfter": 20,
+    "durationMs": 20030,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:02:38 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20031,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:02:58 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20025,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:03:20 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe,axe,sword,shovel",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20030,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:03:40 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 20010,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:04:02 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 16,
+    "healthAfter": 0,
+    "durationMs": 17089,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:04:22 PM",
+    "action": "attack_mob",
+    "target": "skeleton",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "arrow": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 3.3333358764648438,
+    "durationMs": 14109,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:04:37 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "bone": 2
+    },
+    "lost": {},
+    "healthBefore": 4.333335876464844,
+    "healthAfter": 4.333335876464844,
+    "durationMs": 6160,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:05:06 PM",
+    "action": "flee",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "arrow": 1,
+      "bone": 2
+    },
+    "healthBefore": 1.3333358764648438,
+    "healthAfter": 0,
+    "durationMs": 119,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:05:17 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe,axe,sword,shovel",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 16396,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:06:06 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "spruce_log": 2
+    },
+    "healthBefore": 12.833332061767578,
+    "healthAfter": 0,
+    "durationMs": 7759,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:06:23 PM",
+    "action": "mine_wood",
+    "target": "Y=64",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 19967,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:06:51 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 18342,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:07:23 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 18883,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:08:29 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 11.333333969116211,
+    "healthAfter": 0,
+    "durationMs": 4006,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:08:41 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 13.333333015441895,
+    "durationMs": 2329,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:08:44 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 10.5,
+    "healthAfter": 7.000000953674316,
+    "durationMs": 12147,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:08:59 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 7.000000953674316,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 12640,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:10:06 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "stick": 1
+    },
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 27361,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "spruce_log"
+    }
+  },
+  {
+    "time": "9:10:35 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 47262,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:11:24 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 67935,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:12:33 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 6,
+      "stick": 3
+    },
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 64201,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:13:39 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 3
+    },
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 18331,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:14:18 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "spruce_log": 41,
+      "spruce_planks": 48
+    },
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 28,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:14:38 PM",
+    "action": "craft",
+    "target": "crafting_table",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "spruce_planks": 4
+    },
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 73,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:15:00 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 2.0000009536743164,
+    "healthAfter": 2.0000009536743164,
+    "durationMs": 25577,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:20:22 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 21529,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:20:47 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 2
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 57943,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:21:49 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 68099,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:22:58 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 65079,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:24:04 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 46298,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:24:52 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 48105,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:25:43 PM",
+    "action": "mine_wood",
+    "target": "oak_log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 46041,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "9:26:32 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 48210,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "1:58:38 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 70990,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "1:59:53 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 18,
+    "durationMs": 47832,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:00:44 PM",
+    "action": "mine_wood",
+    "target": "north",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 18,
+    "healthAfter": 18,
+    "durationMs": 48147,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:01:35 PM",
+    "action": "mine_wood",
+    "target": "oak_log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 18,
+    "healthAfter": 16,
+    "durationMs": 47341,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:02:23 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 16,
+    "healthAfter": 16,
+    "durationMs": 47207,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:03:11 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 16,
+    "healthAfter": 16,
+    "durationMs": 46494,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:03:59 PM",
+    "action": "mine_wood",
+    "target": "oak_log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 16,
+    "healthAfter": 16,
+    "durationMs": 46712,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:04:47 PM",
+    "action": "mine_wood",
+    "target": "oak_log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "oak_log": 6
+    },
+    "healthBefore": 16,
+    "healthAfter": 0,
+    "durationMs": 23869,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:05:36 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 18058,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:05:59 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 3.1666669845581055,
+    "durationMs": 14035,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:06:16 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 3.1666669845581055,
+    "healthAfter": 0,
+    "durationMs": 50229,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:07:37 PM",
+    "action": "explore",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15780,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:07:53 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 86913,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:09:21 PM",
+    "action": "mine_wood",
+    "target": "oak_log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 44889,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:10:10 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 44668,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:10:57 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 41355,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:11:41 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 46942,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:12:32 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 46126,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:13:19 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 14354,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:13:51 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 4,
+      "oak_sapling": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 24825,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:14:16 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "oak_log": 4,
+      "oak_sapling": 1,
+      "stick": 2
+    },
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 25450,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "oak_sapling"
+    }
+  },
+  {
+    "time": "2:15:06 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 64945,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:16:12 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 63942,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:17:19 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "egg": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 66806,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:18:29 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 43902,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "egg"
+    }
+  },
+  {
+    "time": "2:19:38 PM",
+    "action": "explore",
+    "target": "E",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 15393,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:19:55 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 19.16666603088379,
+    "healthAfter": 0,
+    "durationMs": 49982,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:21:05 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 58212,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:22:05 PM",
+    "action": "attack_mob",
+    "target": "creeper",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 1893,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 2,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:22:22 PM",
+    "action": "attack_mob",
+    "target": "skeleton",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 10.333334922790527,
+    "healthAfter": 9.333334922790527,
+    "durationMs": 12794,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:22:37 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 9.333334922790527,
+    "healthAfter": 0,
+    "durationMs": 8372,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:23:47 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 10.833332061767578,
+    "healthAfter": 0,
+    "durationMs": 59038,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:25:10 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 4,
+      "oak_sapling": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 47577,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:26:01 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_sapling": 1
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 18181,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:26:21 PM",
+    "action": "attack_mob",
+    "target": "zombie",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 1.166666030883789,
+    "durationMs": 20008,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:26:43 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "pointed_dripstone": 1
+    },
+    "lost": {},
+    "healthBefore": 1.166666030883789,
+    "healthAfter": 0.16666603088378906,
+    "durationMs": 90538,
+    "context": {
+      "biome": "unknown",
+      "time": "night",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:28:15 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {},
+    "lost": {
+      "oak_log": 4,
+      "oak_sapling": 2,
+      "pointed_dripstone": 1
+    },
+    "healthBefore": 0.16666603088378906,
+    "healthAfter": 0,
+    "durationMs": 25694,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 3,
+      "equipped": "oak_log"
+    }
+  },
+  {
+    "time": "2:29:25 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "death",
+    "details": "Bot died",
+    "gained": {
+      "dirt": 4
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 0,
+    "durationMs": 52903,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:30:36 PM",
+    "action": "explore",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 6752,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:30:53 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 20,
+    "durationMs": 23632,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:31:21 PM",
+    "action": "mine_wood",
+    "target": "oak_log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "dirt": 3
+    },
+    "lost": {},
+    "healthBefore": 20,
+    "healthAfter": 19,
+    "durationMs": 43177,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:32:07 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {
+      "dirt": 3
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 39840,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "dirt"
+    }
+  },
+  {
+    "time": "2:32:49 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "fail",
+    "details": "No wood gathered",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 30374,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:34:35 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "dirt": 2
+    },
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 41044,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "dirt"
+    }
+  },
+  {
+    "time": "2:35:18 PM",
+    "action": "mine_wood",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 4,
+      "egg": 1
+    },
+    "lost": {
+      "dirt": 1
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 56006,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "dirt"
+    }
+  },
+  {
+    "time": "2:36:15 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 4,
+      "wheat_seeds": 1
+    },
+    "lost": {
+      "dirt": 2
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 56718,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:37:16 PM",
+    "action": "mine_wood",
+    "target": "log",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 4
+    },
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 35031,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:37:53 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_log": 2,
+      "oak_planks": 44
+    },
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 82,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:38:04 PM",
+    "action": "craft",
+    "target": "stick",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "oak_planks": 58,
+      "stick": 8
+    },
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 16,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:38:16 PM",
+    "action": "craft",
+    "target": "crafting_table",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "oak_planks": 4
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 15,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:38:29 PM",
+    "action": "craft",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {},
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 57,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 1,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:38:40 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_pickaxe": 1
+    },
+    "lost": {
+      "oak_planks": 3,
+      "stick": 2,
+      "crafting_table": 1
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 639,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:38:52 PM",
+    "action": "craft",
+    "target": "crafting_table",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "crafting_table": 1
+    },
+    "lost": {
+      "oak_planks": 4
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 7,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:39:04 PM",
+    "action": "craft",
+    "target": "wooden_axe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_axe": 1
+    },
+    "lost": {
+      "stick": 2,
+      "oak_planks": 3
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 47,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:39:17 PM",
+    "action": "craft",
+    "target": "pickaxe",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_sword": 1
+    },
+    "lost": {
+      "oak_planks": 2,
+      "stick": 1
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 14,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:39:28 PM",
+    "action": "craft",
+    "target": "wooden_shovel",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wooden_shovel": 1
+    },
+    "lost": {
+      "stick": 2,
+      "oak_planks": 1
+    },
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 17,
+    "context": {
+      "biome": "unknown",
+      "time": "day",
+      "hasHostiles": 0,
+      "equipped": "none"
+    }
+  },
+  {
+    "time": "2:39:41 PM",
+    "action": "craft",
+    "target": "wooden_pickaxe",
+    "result": "success",
+    "details": "",
     "gained": {
       "wooden_pickaxe": 1
     },
@@ -213,2753 +3753,203 @@
       "oak_planks": 3,
       "stick": 2
     },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 15,
     "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_planks"
-    }
-  },
-  {
-    "session": 27,
-    "time": "11:30:58 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 810,
-    "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "day",
       "hasHostiles": 0,
       "equipped": "none"
     }
   },
   {
-    "session": 27,
-    "time": "11:31:18 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
+    "time": "2:39:52 PM",
+    "action": "mine_stone",
+    "target": "cobblestone",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "wheat_seeds": 1,
+      "dirt": 8,
+      "cobblestone": 4
+    },
     "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 808,
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 17557,
     "context": {
-      "biome": "plains",
-      "time": "day",
+      "biome": "unknown",
+      "time": "night",
       "hasHostiles": 0,
       "equipped": "none"
     }
   },
   {
-    "session": 27,
-    "time": "11:31:37 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
+    "time": "2:40:10 PM",
+    "action": "mine_stone",
+    "target": "cobblestone",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "oak_planks": 4
+      "dirt": 1,
+      "cobblestone": 4
     },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 810,
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 9644,
     "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "wooden_pickaxe"
-    }
-  },
-  {
-    "session": 27,
-    "time": "11:31:59 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 811,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "wooden_pickaxe"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:32:37 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 817,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "wooden_pickaxe"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:32:55 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 813,
-    "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
       "equipped": "wooden_pickaxe"
     }
   },
   {
-    "session": 28,
-    "time": "11:33:20 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
+    "time": "2:40:23 PM",
+    "action": "mine_stone",
+    "target": "",
+    "result": "success",
+    "details": "",
+    "gained": {
+      "dirt": 1,
+      "cobblestone": 4
+    },
     "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 808,
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 10341,
     "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
       "equipped": "wooden_pickaxe"
     }
   },
   {
-    "session": 28,
-    "time": "11:33:43 PM",
-    "action": "craft",
-    "target": "",
+    "time": "2:40:34 PM",
+    "action": "mine_stone",
+    "target": "cobblestone",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "oak_planks": 4
+      "cobblestone": 4
     },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "oak_log"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:34:03 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 809,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:34:26 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 807,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:34:47 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 814,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:35:07 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
     "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 835,
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 10253,
     "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 28,
-    "time": "11:35:33 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 806,
-    "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
       "equipped": "wooden_pickaxe"
     }
   },
   {
-    "session": 28,
-    "time": "11:35:54 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
+    "time": "2:40:46 PM",
+    "action": "upgrade_tools",
+    "target": "stone",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "crafting_table": 1
+      "stone_pickaxe": 1,
+      "stone_sword": 1,
+      "stone_axe": 1
     },
     "lost": {
-      "oak_planks": 4
+      "stick": 5,
+      "cobblestone": 8
     },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 810,
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 3730,
     "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
       "equipped": "wooden_pickaxe"
     }
   },
   {
-    "session": 29,
-    "time": "11:36:33 PM",
-    "action": "craft",
-    "target": "",
+    "time": "2:40:59 PM",
+    "action": "mine_stone",
+    "target": "cobblestone",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "oak_planks": 4
+      "cobblestone": 3,
+      "dirt": 2
     },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 825,
+    "lost": {},
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 11508,
     "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
       "equipped": "wooden_pickaxe"
     }
   },
   {
-    "session": 29,
-    "time": "11:36:55 PM",
+    "time": "2:41:13 PM",
     "action": "craft",
-    "target": "-187,73,158",
+    "target": "stick",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "crafting_table": 1
+      "oak_planks": 6,
+      "stick": 12
     },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 821,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "wooden_pickaxe"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:37:15 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
     "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
+    "healthBefore": 19,
+    "healthAfter": 19,
+    "durationMs": 15,
     "context": {
-      "biome": "plains",
+      "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
-      "equipped": "wooden_pickaxe"
+      "equipped": "stone_pickaxe"
     }
   },
   {
-    "session": 29,
-    "time": "11:37:46 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
+    "time": "2:41:25 PM",
+    "action": "mine_wood",
+    "target": "log",
     "result": "success",
-    "details": "Completed craft",
+    "details": "",
     "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 806,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "wooden_pickaxe"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:38:06 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 814,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "wooden_pickaxe"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:38:41 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed mine_wood",
-    "gained": {
-      "pink_tulip": 2,
-      "oak_log": 6,
-      "oak_sapling": 4,
-      "lilac": 1
+      "cobblestone": 36
     },
     "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 847,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:39:09 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 7.499998092651367,
-    "healthAfter": 5.499998092651367,
-    "durationMs": 806,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "pink_tulip"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:39:31 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 6.499998092651367,
-    "healthAfter": 6.499998092651367,
-    "durationMs": 822,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "pink_tulip"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:40:04 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 6.499998092651367,
-    "healthAfter": 6.499998092651367,
-    "durationMs": 817,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "pink_tulip"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:40:33 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 810,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:40:55 PM",
-    "action": "mine_wood",
-    "target": "-154,77,161",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:41:15 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 882,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:41:35 PM",
-    "action": "explore",
-    "target": "",
-    "result": "success",
-    "details": "Completed explore",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 853,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:42:00 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 812,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 1,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:42:20 PM",
-    "action": "seek_food",
-    "target": "",
-    "result": "fail",
-    "details": "No food gathered",
-    "gained": {
-      "azure_bluet": 1,
-      "dirt": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 803,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 3,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:42:44 PM",
-    "action": "mine_wood",
-    "target": "-191,86,210",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 808,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:43:06 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 859,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:43:32 PM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 863,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:43:51 PM",
-    "action": "seek_food",
-    "target": "",
-    "result": "fail",
-    "details": "No food gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 809,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:44:15 PM",
-    "action": "craft",
-    "target": "-186,89,227",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 852,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:44:39 PM",
-    "action": "seek_food",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No food gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 808,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 1,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:45:05 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {},
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 923,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:45:26 PM",
-    "action": "seek_food",
-    "target": "",
-    "result": "fail",
-    "details": "No food gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 802,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:45:48 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 833,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:46:13 PM",
-    "action": "mine_wood",
-    "target": "(-187,-57,633)",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:46:33 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {
-      "dirt": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 809,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_log"
-    }
-  },
-  {
-    "session": 29,
-    "time": "11:46:56 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "oak_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 864,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "11:59:35 PM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 865,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:00:22 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 806,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "oak_log"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:01:12 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 816,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "oak_log"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:01:54 AM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "oak_planks": 4
-    },
-    "lost": {
-      "oak_log": 1
-    },
-    "healthBefore": 9.500000953674316,
-    "healthAfter": 9.500000953674316,
-    "durationMs": 864,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "oak_log"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:02:26 AM",
-    "action": "craft",
-    "target": "[]",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 907,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:03:01 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 812,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:03:43 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 805,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:04:31 AM",
-    "action": "craft",
-    "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 864,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:05:05 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 818,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:05:49 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 806,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:06:29 AM",
-    "action": "craft",
-    "target": "[]",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 865,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:07:04 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 1,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:07:47 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 810,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:08:29 AM",
-    "action": "seek_food",
-    "target": "",
-    "result": "fail",
-    "details": "No food gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 30,
-    "time": "12:09:11 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 815,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:12:53 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 817,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:13:41 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 813,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:14:23 AM",
-    "action": "seek_food",
-    "target": "[-187,-57,633]",
-    "result": "fail",
-    "details": "No food gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 813,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:15:10 AM",
-    "action": "mine_wood",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 819,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:16:05 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 916,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:16:37 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 907,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:17:05 AM",
-    "action": "craft",
-    "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 898,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:17:38 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 899,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:18:11 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 930,
-    "context": {
-      "biome": "plains",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:18:46 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 905,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:19:20 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 902,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:19:56 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 927,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:20:26 AM",
-    "action": "craft",
-    "target": "[-205,76,26]",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 915,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:20:57 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 899,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:21:28 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 903,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:21:58 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 918,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 31,
-    "time": "12:22:32 AM",
-    "action": "craft",
-    "target": "-187,-57,633",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 893,
-    "context": {
-      "biome": "plains",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 32,
-    "time": "2:45:26 PM",
-    "action": "craft",
-    "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 945,
+    "healthBefore": 19,
+    "healthAfter": 9,
+    "durationMs": 49050,
     "context": {
       "biome": "unknown",
       "time": "night",
       "hasHostiles": 0,
-      "equipped": "stripped_oak_log"
+      "equipped": "stone_pickaxe"
     }
   },
   {
-    "session": 32,
-    "time": "2:46:16 PM",
-    "action": "craft",
+    "time": "2:42:18 PM",
+    "action": "flee",
     "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
+    "result": "death",
+    "details": "Bot died",
     "gained": {},
     "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 934,
+    "healthBefore": 6,
+    "healthAfter": 0,
+    "durationMs": 3697,
     "context": {
       "biome": "unknown",
       "time": "night",
-      "hasHostiles": 1,
-      "equipped": "stripped_oak_log"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:48:01 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 3,
-      "oak_sapling": 2,
-      "stick": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 50190,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:49:31 PM",
-    "action": "craft",
-    "target": "wooden_pickaxe",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 1436,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "jungle_log"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:50:11 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 812,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:51:00 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 816,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:51:45 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 824,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:52:32 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 823,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:53:30 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 814,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 33,
-    "time": "2:54:25 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 823,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 34,
-    "time": "3:09:46 PM",
-    "action": "mine_wood",
-    "target": "nearby trees",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {
-      "apple": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 31270,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 2,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 34,
-    "time": "3:10:52 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 4
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 18740,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "apple"
-    }
-  },
-  {
-    "session": 34,
-    "time": "3:12:09 PM",
-    "action": "craft",
-    "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 847,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 34,
-    "time": "3:13:08 PM",
-    "action": "craft",
-    "target": "",
-    "result": "fail",
-    "details": "Crafting failed or no materials",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 839,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 34,
-    "time": "3:14:07 PM",
-    "action": "mine_wood",
-    "target": "nearby trees",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 1098,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 34,
-    "time": "3:15:14 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 818,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 35,
-    "time": "3:19:08 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 5835,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 36,
-    "time": "3:22:25 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 2
-    },
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 5.333335876464844,
-    "durationMs": 39268,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 2,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 36,
-    "time": "3:23:33 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 5.333335876464844,
-    "durationMs": 831,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 36,
-    "time": "3:24:04 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 5.333335876464844,
-    "durationMs": 830,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 36,
-    "time": "3:24:37 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 5.333335876464844,
-    "durationMs": 824,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 36,
-    "time": "3:25:12 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 5.333335876464844,
-    "durationMs": 825,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 36,
-    "time": "3:25:48 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 5.333335876464844,
-    "durationMs": 819,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 37,
-    "time": "3:26:38 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {
-      "oak_sapling": 1
-    },
-    "lost": {},
-    "healthBefore": 5.333335876464844,
-    "healthAfter": 1.3333358764648438,
-    "durationMs": 9365,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 37,
-    "time": "3:27:25 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 1.3333358764648438,
-    "healthAfter": 1.3333358764648438,
-    "durationMs": 811,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 37,
-    "time": "3:28:01 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 1.3333358764648438,
-    "healthAfter": 1.3333358764648438,
-    "durationMs": 833,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 37,
-    "time": "3:28:43 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 1.3333358764648438,
-    "healthAfter": 1.3333358764648438,
-    "durationMs": 821,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 38,
-    "time": "3:33:20 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 2
-    },
-    "lost": {},
-    "healthBefore": 1.3333358764648438,
-    "healthAfter": 1.3333358764648438,
-    "durationMs": 15845,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "oak_sapling"
-    }
-  },
-  {
-    "session": 38,
-    "time": "3:34:39 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 22663,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 38,
-    "time": "3:35:59 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 848,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 38,
-    "time": "3:37:08 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 854,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 39,
-    "time": "3:42:55 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 67070,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 39,
-    "time": "3:44:40 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 3
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 32374,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 39,
-    "time": "3:46:02 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 841,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 2,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 39,
-    "time": "3:47:03 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "jungle_planks": 4
-    },
-    "healthBefore": 7.000001907348633,
-    "healthAfter": 7.000001907348633,
-    "durationMs": 866,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 1,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 39,
-    "time": "3:47:52 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 8.000001907348633,
-    "healthAfter": 8.000001907348633,
-    "durationMs": 853,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 1,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:49:24 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 17147,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:50:38 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 850,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:51:37 PM",
-    "action": "craft",
-    "target": "planks",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 809,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:52:36 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 7636,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:53:49 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "jungle_log": 1
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 25564,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:54:49 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 8263,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:55:55 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 24597,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:57:06 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "oak_log": 1,
-      "oak_sapling": 2
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 82905,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "3:59:05 PM",
-    "action": "craft",
-    "target": "wood",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "jungle_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 6832,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:00:06 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "jungle_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 5981,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "crafting_table"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:01:03 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 875,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "crafting_table"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:01:51 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "success",
-    "details": "Completed mine_wood ",
-    "gained": {
-      "oak_log": 2
-    },
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 83674,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "crafting_table"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:03:48 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "jungle_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 902,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:04:31 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 858,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:05:21 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "crafting_table": 1
-    },
-    "lost": {
-      "jungle_planks": 4
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 904,
-    "context": {
-      "biome": "unknown",
-      "time": "night",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:06:18 PM",
-    "action": "craft",
-    "target": "",
-    "result": "success",
-    "details": "Completed craft ",
-    "gained": {
-      "jungle_planks": 4
-    },
-    "lost": {
-      "jungle_log": 1
-    },
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 845,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:07:05 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16154,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:08:16 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16868,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:09:18 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16006,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:10:17 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16055,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:11:19 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 13797,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:12:21 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16396,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:13:35 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16227,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:14:51 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 16241,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
-    }
-  },
-  {
-    "session": 40,
-    "time": "4:15:59 PM",
-    "action": "mine_wood",
-    "target": "",
-    "result": "fail",
-    "details": "No resources gathered",
-    "gained": {},
-    "lost": {},
-    "healthBefore": 20,
-    "healthAfter": 20,
-    "durationMs": 7770,
-    "context": {
-      "biome": "unknown",
-      "time": "day",
-      "hasHostiles": 0,
-      "equipped": "none"
+      "hasHostiles": 4,
+      "equipped": "stone_pickaxe"
     }
   }
 ]

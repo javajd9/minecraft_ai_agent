@@ -1,5 +1,308 @@
 {
-  "patterns": {},
-  "lessons": [],
-  "lastUpdated": null
+  "patterns": {
+    "mine_wood": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 51,
+          "fail": 44,
+          "death": 0
+        },
+        "time:day": {
+          "success": 45,
+          "fail": 32,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 48,
+          "fail": 44,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 43,
+          "fail": 42,
+          "death": 0
+        },
+        "equipped:stick": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 6,
+          "fail": 12,
+          "death": 0
+        },
+        "hasHostiles:1": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:spruce_log": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_axe": {
+          "success": 1,
+          "fail": 1,
+          "death": 0
+        },
+        "equipped:dirt": {
+          "success": 2,
+          "fail": 1,
+          "death": 0
+        },
+        "equipped:stone_pickaxe": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 95,
+      "successCount": 51
+    },
+    "craft": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 86,
+          "fail": 0,
+          "death": 0
+        },
+        "time:day": {
+          "success": 69,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 82,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 72,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:crafting_table": {
+          "success": 9,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:spruce_planks": {
+          "success": 2,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:1": {
+          "success": 4,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:spruce_log": {
+          "success": 2,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 17,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:stone_pickaxe": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 86,
+      "successCount": 86
+    },
+    "build_shelter": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "time:day": {
+          "success": 2,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:crafting_table": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 2,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 3,
+      "successCount": 3
+    },
+    "explore": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 5,
+          "fail": 0,
+          "death": 0
+        },
+        "time:day": {
+          "success": 4,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 5,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:spruce_planks": {
+          "success": 2,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 5,
+      "successCount": 5
+    },
+    "attack_mob": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 9,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 9,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:2": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 9,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:1": {
+          "success": 6,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 9,
+      "successCount": 9
+    },
+    "mine_stone": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 5,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 5,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 5,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_pickaxe": {
+          "success": 4,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 5,
+      "successCount": 5
+    },
+    "upgrade_tools": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_pickaxe": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 1,
+      "successCount": 1
+    }
+  },
+  "lessons": [
+    {
+      "text": "craft is highly reliable (100% success).",
+      "confidence": 1
+    },
+    {
+      "text": "craft works best when biome is unknown.",
+      "confidence": 1
+    },
+    {
+      "text": "craft works best when time is day.",
+      "confidence": 1
+    },
+    {
+      "text": "craft works best when hasHostiles is 0.",
+      "confidence": 1
+    },
+    {
+      "text": "craft works best when equipped is none.",
+      "confidence": 1
+    },
+    {
+      "text": "craft works best when time is night.",
+      "confidence": 1
+    }
+  ],
+  "lastUpdated": "2026-03-05T19:42:15.025Z"
 }

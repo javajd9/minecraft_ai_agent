@@ -1,0 +1,41 @@
+{
+  "mastery": {
+    "mine_wood": {
+      "successes": 27,
+      "failures": 38,
+      "attempts": 65
+    },
+    "craft": {
+      "successes": 37,
+      "failures": 0,
+      "attempts": 37
+    },
+    "attack_mob": {
+      "successes": 13,
+      "failures": 0,
+      "attempts": 13
+    },
+    "flee": {
+      "successes": 1,
+      "failures": 0,
+      "attempts": 1
+    },
+    "explore": {
+      "successes": 3,
+      "failures": 0,
+      "attempts": 3
+    },
+    "mine_stone": {
+      "successes": 5,
+      "failures": 0,
+      "attempts": 5
+    },
+    "upgrade_tools": {
+      "successes": 1,
+      "failures": 0,
+      "attempts": 1
+    }
+  },
+  "completed": [],
+  "lastUpdated": "2026-03-05T19:42:15.026Z"
+}

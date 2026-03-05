@@ -11,6 +11,14 @@
 
 const mineflayer = require('mineflayer');
 
+// ── Mineflayer plugins ──────────────────────────────────────────────────────
+const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
+const pvp = require('mineflayer-pvp').plugin;
+const autoEat = require('mineflayer-auto-eat').loader;
+const armorManager = require('mineflayer-armor-manager');
+const collectBlock = require('mineflayer-collectblock').plugin;
+const toolPlugin = require('mineflayer-tool').plugin;
+
 /**
  * Block IDs that are considered "interesting" for the observation vector.
  * We encode nearby block types as small integers.
@@ -26,6 +34,14 @@ function createBot(config) {
     auth: 'offline',
   });
 
+  // ── Load plugins ──────────────────────────────────────────────────────
+  bot.loadPlugin(pathfinder);
+  bot.loadPlugin(pvp);
+  bot.loadPlugin(autoEat);
+  bot.loadPlugin(armorManager);
+  bot.loadPlugin(collectBlock);
+  bot.loadPlugin(toolPlugin);
+
   // ── State tracking ────────────────────────────────────────────────────
   bot.visitedChunks = new Set();   // "chunk-key" strings for exploration reward
   bot.stepCount = 0;
@@ -38,15 +54,41 @@ function createBot(config) {
     bot.isReady = true;
     bot.isDead = false;
     console.log(`[Bot] Spawned at ${JSON.stringify(bot.entity.position)}`);
-    // Startup commands disabled — running vanilla survival
-    // bot.chat('/gamemode survival');
-    // bot.chat('/gamerule doMobSpawning false');
-    // bot.chat('/gamerule doMobLoot false');
-    // bot.chat('/gamerule doDaylightCycle false');
-    // bot.chat('/gamerule keepInventory false');
-    // bot.chat('/time set day');
-    // bot.chat('/effect give @s minecraft:saturation 99999 255 true');
-    // bot.chat('/effect give @s minecraft:instant_health 1 255 true');
+
+    // Configure pathfinder
+    try {
+      const mcData = require('minecraft-data')(bot.version);
+      const movements = new Movements(bot, mcData);
+      movements.allowSprinting = true;
+      movements.canDig = true;
+      movements.allow1by1towers = false;   // don't pillar up
+      movements.allowFreeMotion = false;
+      movements.scaffoldingBlocks = [];    // don't bridge
+      bot.pathfinder.setMovements(movements);
+      console.log('[Bot] ✅ Pathfinder configured');
+    } catch (e) {
+      console.warn('[Bot] Pathfinder init error:', e.message);
+    }
+
+    // Configure auto-eat: eat when food drops below 14
+    try {
+      bot.autoEat.options = {
+        priority: 'foodPoints',
+        startAt: 14,
+        bannedFood: ['rotten_flesh', 'spider_eye', 'poisonous_potato', 'pufferfish'],
+      };
+      bot.autoEat.enable();
+      console.log('[Bot] ✅ Auto-eat enabled (triggers at 14 food)');
+    } catch (e) {
+      console.warn('[Bot] Auto-eat init error:', e.message);
+    }
+
+    // Armor manager auto-equips best armor
+    try {
+      if (bot.armorManager) {
+        console.log('[Bot] ✅ Armor manager active');
+      }
+    } catch { }
   });
 
   bot.on('death', () => {
@@ -201,4 +243,4 @@ function createBot(config) {
   return bot;
 }
 
-module.exports = { createBot };
+module.exports = { createBot, Movements, goals };

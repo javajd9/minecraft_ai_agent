@@ -23,12 +23,15 @@ const http = require('http');
 const path = require('path');
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder');
 const Vec3 = require('vec3');
+const { ReactiveNavigator } = require('./navigation');
 const { formatVision } = require('./scanner');
 const { ExperienceLog } = require('./experience');
 const { StrategyEngine } = require('./strategy');
 const { GameKnowledge } = require('./game_knowledge');
 const { GoalTracker } = require('./goals');
 const { SkillLibrary } = require('./skills');
+const { SkillManager } = require('./skill_manager');
+const { Curriculum } = require('./curriculum');
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -77,12 +80,18 @@ class AgentBrain {
         }
         this.experience = new ExperienceLog();  // outcome tracking
         this.strategy = new StrategyEngine();   // lesson aggregation
+        this.curriculum = new Curriculum();     // mastery tracking & auto-curriculum
         this.gameKnowledge = null;  // initialized after bot spawns (needs registry)
         this.goals = new GoalTracker();          // tech tree progression
         this.skills = null;                      // initialized after bot spawns
+        this.navigator = new ReactiveNavigator(bot);
+        this.skillManager = null;  // initialized after bot spawns (needs navigator)
 
         // Task commitment — prevents flip-flopping between actions
         this._currentTask = null;      // { action, target, startedAt, lockedUntil }
+
+        // Exploration memory — track which directions we've explored recently
+        this._exploredDirs = {};  // { 'N': timestamp, 'NE': timestamp, ... }
 
         console.log('[Brain] Agent memory loaded.');
         console.log(`[Brain] Current goal: ${this.memory.currentGoal}`);
@@ -181,29 +190,46 @@ class AgentBrain {
     async _think() {
         if (this.busy) return;
 
-        // If committed to a task, skip (unless health critical)
+        // If committed to a task, skip (unless health critical OR mob threat)
         if (this._currentTask && Date.now() < this._currentTask.lockedUntil) {
             const health = this.bot.health ?? 20;
-            if (health >= 6) return;
-            console.log(`[Brain] ⚠️ Health critical (${health}) — emergency survival!`);
-            this._currentTask = null;
-            this.busy = true;
-            try {
-                const food = this.bot.inventory.items().find(i =>
-                    i.name.includes('cooked_') || i.name === 'bread' || i.name === 'apple' || i.name === 'golden_apple'
-                );
-                if (food) {
-                    console.log(`[Brain] 🍖 Emergency eating: ${food.name}`);
-                    await this.bot.equip(food, 'hand');
-                    await this.bot.consume();
+
+            // Emergency 1: Health critical
+            if (health < 6) {
+                console.log(`[Brain] ⚠️ Health critical (${health}) — emergency survival!`);
+                this._currentTask = null;
+                this.busy = true;
+                try {
+                    const food = this.bot.inventory.items().find(i =>
+                        i.name.includes('cooked_') || i.name === 'bread' || i.name === 'apple' || i.name === 'golden_apple'
+                    );
+                    if (food) {
+                        console.log(`[Brain] 🍖 Emergency eating: ${food.name}`);
+                        await this.bot.equip(food, 'hand');
+                        await this.bot.consume();
+                    } else {
+                        console.log('[Brain] 🏃 No food — fleeing!');
+                        await this._exploreRandomly();
+                    }
+                } catch (e) {
+                    console.warn('[Brain] Emergency failed:', e.message);
+                } finally { this.busy = false; }
+                return;
+            }
+
+            // Emergency 2: Mob threat — break lock if hostile within 8 blocks
+            if (!this.busy) {
+                const { hostiles, closestDist } = this._assessThreat();
+                if (hostiles.length > 0 && closestDist < 8) {
+                    console.log(`[Brain] ⚠️ Mob threat (${hostiles[0].name} at ${Math.round(closestDist)}b) — breaking task lock!`);
+                    this._currentTask = null;
+                    // Fall through to normal think cycle below
                 } else {
-                    console.log('[Brain] 🏃 No food — fleeing!');
-                    await this._exploreRandomly();
+                    return; // Still locked, no threat
                 }
-            } catch (e) {
-                console.warn('[Brain] Emergency failed:', e.message);
-            } finally { this.busy = false; }
-            return;
+            } else {
+                return; // busy executing, can't interrupt
+            }
         }
 
         if (this._currentTask) {
@@ -214,12 +240,16 @@ class AgentBrain {
         this.busy = true;
 
         try {
-            await this._escapeWater();
-
             // ── Check if we have a pending LLM decision ──────────────
             let action, target;
 
-            if (this._pendingLLMAction) {
+            // AUTO-THREAT: Check for nearby hostile mobs before anything else
+            const threatResponse = this._fightOrFlight();
+            if (threatResponse) {
+                action = threatResponse.action;
+                target = threatResponse.target;
+                console.log(`[Brain] ${threatResponse.action === 'flee' ? '🏃' : '⚔️'} ${threatResponse.reason}`);
+            } else if (this._pendingLLMAction) {
                 // LLM has responded — use its decision
                 action = this._pendingLLMAction.action;
                 target = this._pendingLLMAction.target;
@@ -308,16 +338,37 @@ class AgentBrain {
 
             await this._executeAction(action, target);
 
-            // Record outcome
+            // Record outcome — compare inventory before/after
             const invAfter = this._readInventory();
             let result = 'success', detail = '';
-            if (action === 'mine_wood') {
-                const before = Object.entries(invBefore).filter(([k]) => k.includes('log')).reduce((s, [, v]) => s + v, 0);
-                const after = Object.entries(invAfter).filter(([k]) => k.includes('log')).reduce((s, [, v]) => s + v, 0);
-                if (after <= before) { result = 'fail'; detail = 'No logs gathered'; }
+
+            // Detect success/fail per action type
+            const gained = {};
+            for (const [k, v] of Object.entries(invAfter)) {
+                const diff = v - (invBefore[k] || 0);
+                if (diff > 0) gained[k] = diff;
             }
+            const lost = {};
+            for (const [k, v] of Object.entries(invBefore)) {
+                const diff = v - (invAfter[k] || 0);
+                if (diff > 0) lost[k] = diff;
+            }
+
+            // Check if mining actions actually gathered anything
+            if (action.startsWith('mine_')) {
+                const targetBlock = action.replace('mine_', '');
+                const gotAnything = Object.keys(gained).length > 0;
+                if (!gotAnything) { result = 'fail'; detail = `No ${targetBlock} gathered`; }
+            }
+
             const exp = this.experience.endAction(result, detail, this.bot);
             if (exp) this.strategy.recordOutcome(action, result, exp.context);
+
+            // Track mastery for curriculum
+            this.curriculum.recordOutcome(action, result === 'success');
+
+            // ── Lesson extraction — REAL learning from every action ──
+            this._extractLesson(action, target, result, gained, lost, exp);
 
         } catch (err) {
             console.error('[Brain] Error:', err.message);
@@ -335,84 +386,145 @@ class AgentBrain {
         const eval_ = this.goals.evaluate(this.bot, inv, this.memory);
         const milestone = eval_.current;
 
-        if (!milestone) return null; // all done
+        if (!milestone) return null; // all milestones done!
 
         // Count resources
         const logCount = Object.entries(inv).filter(([k]) => k.includes('_log')).reduce((s, [, v]) => s + v, 0);
         const plankCount = Object.entries(inv).filter(([k]) => k.includes('_planks')).reduce((s, [, v]) => s + v, 0);
         const stickCount = inv.stick || 0;
         const tableCount = inv.crafting_table || 0;
+        const cobble = inv.cobblestone || 0;
+        const coal = inv.coal || 0;
+        const rawIron = inv.raw_iron || 0;
+        const ironIngot = inv.iron_ingot || 0;
+        const diamond = inv.diamond || 0;
 
         switch (milestone.id) {
+            // ── PHASE 1: WOOD ──────────────────────────────
             case 'get_wood':
                 return { action: 'mine_wood', target: 'log', reason: `Gathering wood (have ${logCount} logs, need 8)` };
 
             case 'craft_basics':
-                if (logCount >= 1 && plankCount < 8) {
+                if (logCount >= 1 && plankCount < 8)
                     return { action: 'craft', target: 'planks', reason: `Crafting planks (have ${plankCount}, need 8)` };
-                }
-                if (plankCount >= 2 && stickCount < 4) {
+                if (plankCount >= 2 && stickCount < 4)
                     return { action: 'craft', target: 'stick', reason: `Crafting sticks (have ${stickCount}, need 4)` };
-                }
-                // Need more logs for planks
                 return { action: 'mine_wood', target: 'log', reason: 'Need more logs for planks & sticks' };
 
-            case 'full_wooden_tools':
-                // Need crafting table (cap at 1)
-                if (tableCount < 1 && plankCount >= 4) {
+            case 'crafting_table':
+                if (plankCount >= 4)
                     return { action: 'craft', target: 'crafting_table', reason: 'Crafting table for tools' };
-                }
-                // Craft tools in order
+                if (logCount >= 1)
+                    return { action: 'craft', target: 'planks', reason: 'Need planks for crafting table' };
+                return { action: 'mine_wood', target: 'log', reason: 'Need wood for crafting table' };
+
+            case 'full_wooden_tools':
+                if (tableCount < 1 && plankCount >= 4)
+                    return { action: 'craft', target: 'crafting_table', reason: 'Crafting table for tools' };
                 if (!inv.wooden_pickaxe) return { action: 'craft', target: 'wooden_pickaxe', reason: 'Crafting wooden pickaxe' };
                 if (!inv.wooden_axe) return { action: 'craft', target: 'wooden_axe', reason: 'Crafting wooden axe' };
                 if (!inv.wooden_sword) return { action: 'craft', target: 'wooden_sword', reason: 'Crafting wooden sword' };
                 if (!inv.wooden_shovel) return { action: 'craft', target: 'wooden_shovel', reason: 'Crafting wooden shovel' };
-                // Need more materials
-                if (plankCount < 4) return { action: 'craft', target: 'planks', reason: 'Need planks for remaining tools' };
-                if (stickCount < 2) return { action: 'craft', target: 'stick', reason: 'Need sticks for remaining tools' };
+                if (plankCount < 4) return { action: 'craft', target: 'planks', reason: 'Need planks for tools' };
+                if (stickCount < 2) return { action: 'craft', target: 'stick', reason: 'Need sticks for tools' };
                 return { action: 'mine_wood', target: 'log', reason: 'Need more wood for tools' };
 
+            // ── PHASE 2: STONE ─────────────────────────────
+            case 'mine_stone':
+                return { action: 'mine_stone', target: 'cobblestone', reason: `Mining cobblestone (have ${cobble}, need 16)` };
+
+            case 'stone_tools':
+                return { action: 'upgrade_tools', target: 'stone', reason: 'Upgrading to stone tools' };
+
             case 'build_shelter':
+                if (cobble + plankCount < 20)
+                    return { action: 'mine_stone', target: 'cobblestone', reason: 'Need more blocks for shelter' };
                 return { action: 'build_shelter', target: '', reason: 'Building shelter' };
 
+            // ── PHASE 3: COAL & TORCHES ────────────────────
+            case 'mine_coal':
+                return { action: 'mine_coal', target: 'coal_ore', reason: `Mining coal (have ${coal}, need 8)` };
+
+            case 'craft_torches':
+                if (coal >= 1 && stickCount >= 1)
+                    return { action: 'craft', target: 'torch', reason: 'Crafting torches' };
+                if (stickCount < 1)
+                    return { action: 'craft', target: 'stick', reason: 'Need sticks for torches' };
+                return { action: 'mine_coal', target: 'coal_ore', reason: 'Need coal for torches' };
+
+            case 'furnace':
+                if (cobble >= 8)
+                    return { action: 'craft', target: 'furnace', reason: 'Crafting furnace' };
+                return { action: 'mine_stone', target: 'cobblestone', reason: `Need cobblestone for furnace (have ${cobble}, need 8)` };
+
+            case 'cook_food':
+                return { action: 'smelt', target: 'food', reason: 'Cooking food in furnace' };
+
+            // ── PHASE 4: IRON ──────────────────────────────
+            case 'mine_iron':
+                return { action: 'mine_iron', target: 'iron_ore', reason: `Mining iron ore (have ${rawIron + ironIngot}, need 12)` };
+
+            case 'smelt_iron':
+                return { action: 'smelt', target: 'raw_iron', reason: `Smelting iron (have ${rawIron} raw, ${ironIngot} ingots)` };
+
+            case 'iron_tools':
+                return { action: 'upgrade_tools', target: 'iron', reason: 'Crafting iron tools' };
+
+            case 'iron_armor':
+                if (ironIngot >= 24)
+                    return { action: 'craft', target: 'iron_armor', reason: 'Crafting iron armor set' };
+                return { action: 'mine_iron', target: 'iron_ore', reason: `Need more iron for armor (have ${ironIngot} ingots, need 24)` };
+
+            case 'shield':
+                if (ironIngot >= 1 && plankCount >= 6)
+                    return { action: 'craft', target: 'shield', reason: 'Crafting shield' };
+                if (ironIngot < 1)
+                    return { action: 'mine_iron', target: 'iron_ore', reason: 'Need iron for shield' };
+                return { action: 'mine_wood', target: 'log', reason: 'Need planks for shield' };
+
+            case 'bucket':
+                if (ironIngot >= 3)
+                    return { action: 'craft', target: 'bucket', reason: 'Crafting bucket' };
+                return { action: 'mine_iron', target: 'iron_ore', reason: 'Need iron for bucket' };
+
+            // ── PHASE 5: FOOD ──────────────────────────────
+            case 'get_seeds':
+                return { action: 'seek_food', target: 'seeds', reason: 'Collecting wheat seeds' };
+
+            case 'start_farm':
+                return { action: 'use_skill', target: 'start a wheat farm near water', reason: 'Starting farm' };
+
+            case 'bread':
+                if (inv.wheat >= 3)
+                    return { action: 'craft', target: 'bread', reason: 'Crafting bread' };
+                return { action: 'use_skill', target: 'harvest wheat from farm', reason: 'Harvesting wheat for bread' };
+
+            // ── PHASE 6: DIAMOND ───────────────────────────
+            case 'mine_diamond':
+                return { action: 'mine_diamond', target: 'diamond_ore', reason: `Mining diamonds at Y=11 (have ${diamond}, need 3)` };
+
+            case 'diamond_tools':
+                if (diamond >= 2 && stickCount >= 1)
+                    return { action: 'craft', target: 'diamond_pickaxe', reason: 'Crafting diamond pickaxe' };
+                if (diamond >= 2)
+                    return { action: 'craft', target: 'diamond_sword', reason: 'Crafting diamond sword' };
+                return { action: 'mine_diamond', target: 'diamond_ore', reason: 'Need more diamonds' };
+
+            case 'enchanting_table':
+                return { action: 'use_skill', target: 'craft an enchanting table', reason: 'Crafting enchanting table' };
+
+            // ── PHASE 7-8: NETHER & END (all via SkillManager) ──
             default:
-                return { action: milestone.suggestedAction, target: '', reason: milestone.description };
+                // For advanced milestones, let the SkillManager handle it
+                return {
+                    action: 'use_skill',
+                    target: milestone.description,
+                    reason: `${milestone.name}: ${milestone.description}`
+                };
         }
     }
 
-    /**
-     * If the bot is standing in water, walk toward nearby land.
-     */
-    async _escapeWater() {
-        const pos = this.bot.entity?.position;
-        if (!pos) return;
-        const blockAtFeet = this.bot.blockAt(pos.offset(0, -0.5, 0));
-        const blockAtHead = this.bot.blockAt(pos);
-        const inWater = (blockAtFeet && blockAtFeet.name.includes('water')) ||
-            (blockAtHead && blockAtHead.name.includes('water'));
-        if (!inWater) return;
 
-        console.log('[Brain] 🌊 In water! Escaping...');
-        // Look for a non-water block nearby
-        const { Vec3 } = require('vec3');
-        for (let attempt = 0; attempt < 4; attempt++) {
-            const angle = attempt * (Math.PI / 2); // try 4 directions
-            const tx = pos.x + Math.cos(angle) * 10;
-            const tz = pos.z + Math.sin(angle) * 10;
-            const targetBlock = this.bot.blockAt(new Vec3(Math.round(tx), Math.round(pos.y), Math.round(tz)));
-            if (targetBlock && !targetBlock.name.includes('water') && targetBlock.name !== 'air') {
-                await this._walkTo(new Vec3(tx, pos.y, tz), 3, 8000);
-                // Check if we escaped
-                const newBlock = this.bot.blockAt(this.bot.entity.position.offset(0, -0.5, 0));
-                if (!newBlock || !newBlock.name.includes('water')) return;
-            }
-        }
-        // Fallback: just jump and walk forward
-        this.bot.setControlState('jump', true);
-        this.bot.setControlState('forward', true);
-        await new Promise(r => setTimeout(r, 3000));
-        this.bot.clearControlStates();
-    }
 
     /** Triggers thinking soon, but not instantly (prevents infinite CPU loops) */
     thinkNextTick(delayMs = 200) {
@@ -474,12 +586,20 @@ ${this.experience.getRecentForPrompt(5)}
 LEARNED STRATEGIES:
 ${this.strategy.getLessonsForPrompt(3)}
 
+SKILL MASTERY (how good you are at each action):
+${this.curriculum.getMasteryForPrompt()}
+
 AVAILABLE ACTIONS:
 ${this.skills.getSkillList().map(s => '  ' + s).join('\n')}
+  use_skill      \u2014 write & run custom code for any task (action_target = task description)
+
+SAVED SKILLS (reusable code):
+${this.skillManager ? this.skillManager.getSkillList() : '  None yet.'}
 
 YOUR TASK: Follow the SURVIVAL PROGRESSION above. Do the 👉 step.
 Pick ONE action and commit to it fully. You will be locked in for 15-25 seconds.
 If hungry (food < 14), eat first. If health < 10, flee or eat. At night, seek shelter or sleep.
+If PATH OBSTRUCTIONS shows blocks in your way, mine through them before trying to move (equip the right tool first).
 
 Respond with ONLY valid JSON:
 {
@@ -525,7 +645,7 @@ Respond with ONLY valid JSON:
             });
 
             req.on('error', () => resolve(null)); // Ollama not running — fail silently
-            req.setTimeout(60000, () => { req.destroy(); resolve(null); }); // 60s for GPU cold-start
+            req.setTimeout(15000, () => { req.destroy(); resolve(null); }); // 15s — don't idle waiting
             req.write(body);
             req.end();
         });
@@ -877,6 +997,27 @@ Respond with ONLY valid JSON:
                     this._stopMovement();
                     break;
 
+                case 'use_skill': {
+                    // Voyager-style: pass task description to skill manager
+                    if (target && target.length > 3) {
+                        if (!this.skillManager) {
+                            this.skillManager = new SkillManager(
+                                this.bot, this.navigator, this.activeModel,
+                                this.memory.gameplayKnowledge || []
+                            );
+                        } else {
+                            // Update knowledge on every call
+                            this.skillManager.learnedKnowledge = this.memory.gameplayKnowledge || [];
+                        }
+                        const result = await this.skillManager.runTask(target);
+                        if (result.success) {
+                            this._addEvent(`✅ Skill completed: ${target}`);
+                        } else {
+                            this._addEvent(`❌ Skill failed: ${result.result}`);
+                        }
+                    }
+                    break;
+                }
                 case 'explore':
                 default:
                     await this._exploreRandomly();
@@ -887,26 +1028,108 @@ Respond with ONLY valid JSON:
         }
     }
 
-    // Cancel current pathfinding goal (if any)
     _stopMovement() {
-        try {
-            if (this.bot.pathfinder && this.bot.pathfinder.isMoving()) {
-                this.bot.pathfinder.stop();
-            }
-        } catch { /* ignore */ }
+        try { this.navigator.stop(); } catch { }
+        try { if (this.bot.pathfinder?.isMoving()) this.bot.pathfinder.stop(); } catch { }
     }
 
-    // Walk toward a random point 20-40 blocks away using manual movement
     async _exploreRandomly() {
         const pos = this.bot.entity?.position;
         if (!pos) return;
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 20 + Math.random() * 20;
+        const { angle, label } = this._pickUnexploredDirection();
+        const dist = 30 + Math.random() * 20;
         const tx = Math.round(pos.x + Math.cos(angle) * dist);
         const tz = Math.round(pos.z + Math.sin(angle) * dist);
-        console.log(`[Brain] 🧭 Exploring towards (${tx}, ${tz})`);
-        const { Vec3 } = require('vec3');
-        await this._walkTo(new Vec3(tx, pos.y, tz), 5, 15000);
+        console.log(`[Brain] 🧭 Exploring ${label} (${Math.round(dist)}b)`);
+        this._addEvent(`🧭 Explored ${label}`);
+        this._exploredDirs[label] = Date.now();
+        await this._navigateTo(tx, pos.y, tz, 5);
+    }
+
+    /**
+     * Pick the least recently explored compass direction.
+     * Tracks absolute positions to avoid revisiting the same areas.
+     * Returns { angle (radians), label (string) }.
+     */
+    _pickUnexploredDirection() {
+        const DIRS = [
+            { label: 'N', angle: -Math.PI / 2 },
+            { label: 'NE', angle: -Math.PI / 4 },
+            { label: 'E', angle: 0 },
+            { label: 'SE', angle: Math.PI / 4 },
+            { label: 'S', angle: Math.PI / 2 },
+            { label: 'SW', angle: 3 * Math.PI / 4 },
+            { label: 'W', angle: Math.PI },
+            { label: 'NW', angle: -3 * Math.PI / 4 },
+        ];
+
+        const now = Date.now();
+        const EXPIRE_MS = 5 * 60 * 1000; // directions "expire" after 5 min
+
+        // Clean up expired entries
+        for (const key of Object.keys(this._exploredDirs)) {
+            if (now - this._exploredDirs[key] > EXPIRE_MS) delete this._exploredDirs[key];
+        }
+        if (!this._exploredPositions) this._exploredPositions = [];
+        this._exploredPositions = this._exploredPositions.filter(p => now - p.time < EXPIRE_MS);
+
+        const pos = this.bot.entity?.position;
+
+        // Score each direction — lower is better
+        const scored = DIRS.map(dir => {
+            let score = 0;
+
+            // Penalize recently explored directions
+            const lastExplored = this._exploredDirs[dir.label] || 0;
+            if (lastExplored > 0) {
+                score += 100 - Math.min(100, (now - lastExplored) / 1000); // 0-100 based on recency
+            }
+
+            // Penalize directions where we've already BEEN (absolute position check)
+            if (pos) {
+                const testDist = 40;
+                const targetX = pos.x + Math.cos(dir.angle) * testDist;
+                const targetZ = pos.z + Math.sin(dir.angle) * testDist;
+                for (const visited of this._exploredPositions) {
+                    const dx = targetX - visited.x;
+                    const dz = targetZ - visited.z;
+                    const distToVisited = Math.sqrt(dx * dx + dz * dz);
+                    if (distToVisited < 30) {
+                        score += 50; // already been near this target area
+                    }
+                }
+            }
+
+            // Heavily penalize the opposite of last explored direction (no back-and-forth)
+            if (this._lastExploreDir) {
+                const OPPOSITES = { N: 'S', S: 'N', E: 'W', W: 'E', NE: 'SW', SW: 'NE', NW: 'SE', SE: 'NW' };
+                if (dir.label === OPPOSITES[this._lastExploreDir]) {
+                    score += 200; // strongly avoid going back
+                }
+            }
+
+            // Small random factor to break ties
+            score += Math.random() * 10;
+
+            return { ...dir, score };
+        });
+
+        // Pick the lowest-scored direction
+        scored.sort((a, b) => a.score - b.score);
+        const picked = scored[0];
+
+        // Record this choice
+        this._lastExploreDir = picked.label;
+        if (pos) {
+            const testDist = 40;
+            this._exploredPositions.push({
+                x: pos.x + Math.cos(picked.angle) * testDist,
+                z: pos.z + Math.sin(picked.angle) * testDist,
+                time: now,
+            });
+        }
+
+        return picked;
     }
 
     // ── Game action helpers ────────────────────────────────────────────────────
@@ -916,76 +1139,272 @@ Respond with ONLY valid JSON:
      * Re-chases if the entity flees. Gives up after maxSwings OR 10s timeout.
      */
     async _huntEntity(entityInfo, maxSwings = 20) {
-        // entityInfo may be a wrapper { entity, name, ... } or a raw entity
         const mob = entityInfo.entity || entityInfo;
         const mobName = entityInfo.name || mob.name || 'unknown';
-        const deadline = Date.now() + 15_000;  // 15s hard timeout
+        const deadline = Date.now() + 15_000;
+
+        // Equip best weapon first
+        await this._equipBestWeapon();
+
         for (let i = 0; i < maxSwings; i++) {
-            if (!mob.isValid) break;
-            if (Date.now() > deadline) {
-                console.log('[Brain] ⏱️  Hunt timed out — giving up on', mobName);
-                this._addEvent(`⏱️ Gave up chasing ${mobName} (timeout)`);
+            if (!mob.isValid) {
+                this._addEvent(`☠️ Killed ${mobName}`);
                 break;
             }
+            if (Date.now() > deadline) {
+                this._addEvent(`⏱️ Gave up chasing ${mobName}`);
+                break;
+            }
+
+            // Check health mid-fight — flee if getting low
+            if ((this.bot.health ?? 20) < 6) {
+                console.log('[Brain] 🏃 Health critical mid-fight — fleeing!');
+                this._addEvent(`🏃 Fled from ${mobName} (low HP)`);
+                await this._fleeFrom(mob.position);
+                return;
+            }
+
             const dist = mob.position.distanceTo(this.bot.entity.position);
             if (dist > 4) {
-                await this._walkTo(mob.position, 3, 3000);
+                await this.navigator.goTo(mob.position, 2, 3000);
             }
             if (mob.isValid) {
+                await this.bot.lookAt(mob.position.offset(0, mob.height * 0.8, 0));
                 this.bot.attack(mob);
-                this._addEvent(`⚔️  Attacked ${mobName}`);
             }
-            await new Promise(r => setTimeout(r, 600));
+            await new Promise(r => setTimeout(r, 500)); // attack cooldown
         }
     }
 
-    async _mineNearestBlock(blockNameFragment, maxDistance = 32, maxBlocks = 4) {
+    /**
+     * Assess combat confidence: should we fight or flee?
+     * Returns a score from 0 (run!) to 100 (easy fight).
+     */
+    _assessThreat() {
+        const pos = this.bot.entity?.position;
+        if (!pos) return { confidence: 50, hostiles: [], closestDist: Infinity };
+
+        const HOSTILE_MOBS = new Set([
+            'zombie', 'skeleton', 'spider', 'creeper', 'enderman', 'witch',
+            'drowned', 'husk', 'stray', 'phantom', 'pillager', 'vindicator',
+            'zombie_villager', 'cave_spider', 'warden', 'wither_skeleton'
+        ]);
+        const DANGEROUS = new Set(['creeper', 'enderman', 'witch', 'warden', 'wither_skeleton']);
+
+        // Find nearby hostiles
+        const hostiles = Object.values(this.bot.entities)
+            .filter(e => e !== this.bot.entity && e.position &&
+                HOSTILE_MOBS.has(e.name?.toLowerCase()) &&
+                e.position.distanceTo(pos) <= 16)
+            .sort((a, b) => a.position.distanceTo(pos) - b.position.distanceTo(pos));
+
+        if (hostiles.length === 0) return { confidence: 100, hostiles: [], closestDist: Infinity };
+
+        const closestDist = hostiles[0].position.distanceTo(pos);
+
+        // Build confidence score
+        let confidence = 50;
+
+        // Health factor
+        const health = this.bot.health ?? 20;
+        confidence += (health - 10) * 3; // +30 at full health, -30 at 0
+
+        // Food factor
+        const food = this.bot.food ?? 20;
+        if (food >= 14) confidence += 10;
+        else if (food < 6) confidence -= 20;
+
+        // Weapon factor
+        const inv = this.bot.inventory.items();
+        const hasSword = inv.some(i => i.name.includes('_sword'));
+        const hasAxe = inv.some(i => i.name.includes('_axe'));
+        const hasShield = inv.some(i => i.name === 'shield');
+        if (hasSword) confidence += 20;
+        else if (hasAxe) confidence += 10;
+        if (hasShield) confidence += 10;
+
+        // Armor factor
+        const armorSlots = ['head', 'torso', 'legs', 'feet'];
+        let armorPieces = 0;
+        for (const slot of armorSlots) {
+            try { if (this.bot.inventory.slots[this.bot.getEquipmentDestSlot(slot)]) armorPieces++; } catch { }
+        }
+        confidence += armorPieces * 8;
+
+        // Enemy factor
+        confidence -= (hostiles.length - 1) * 15; // multiple mobs = scary
+        if (hostiles.some(e => DANGEROUS.has(e.name?.toLowerCase()))) confidence -= 25;
+        if (hostiles.some(e => e.name === 'creeper') && closestDist < 5) confidence -= 30;
+
+        return {
+            confidence: Math.max(0, Math.min(100, confidence)),
+            hostiles,
+            closestDist: Math.round(closestDist),
+        };
+    }
+
+    /**
+     * Auto fight-or-flight. Returns { action, target, reason } or null if no threat.
+     */
+    _fightOrFlight() {
+        const { confidence, hostiles, closestDist } = this._assessThreat();
+        if (hostiles.length === 0) return null;
+
+        const closest = hostiles[0];
+        const mobName = closest.name || 'hostile';
+
+        // Too far to care (> 12 blocks and not approaching)
+        if (closestDist > 12) return null;
+
+        // FLEE: low confidence or creeper very close
+        if (confidence < 40 || (mobName === 'creeper' && closestDist < 6)) {
+            return {
+                action: 'flee',
+                target: '',
+                reason: `Fleeing from ${mobName} (confidence: ${confidence}%, dist: ${closestDist}b)`,
+            };
+        }
+
+        // FIGHT: confident and mob is close
+        if (confidence >= 40 && closestDist <= 10) {
+            return {
+                action: 'attack_mob',
+                target: mobName,
+                reason: `Fighting ${mobName} (confidence: ${confidence}%, dist: ${closestDist}b)`,
+            };
+        }
+
+        return null; // not threatening enough to react
+    }
+
+    /**
+     * Equip the best melee weapon from inventory.
+     */
+    async _equipBestWeapon() {
+        const weapons = [
+            'netherite_sword', 'diamond_sword', 'iron_sword', 'stone_sword', 'wooden_sword',
+            'netherite_axe', 'diamond_axe', 'iron_axe', 'stone_axe', 'wooden_axe',
+        ];
+        for (const name of weapons) {
+            const item = this.bot.inventory.items().find(i => i.name === name);
+            if (item) {
+                try {
+                    await this.bot.equip(item, 'hand');
+                    console.log(`[Brain] ⚔️ Equipped ${name}`);
+                    return;
+                } catch { }
+            }
+        }
+    }
+
+    /**
+     * Run away from a position (opposite direction, sprint + jump).
+     */
+    async _fleeFrom(dangerPos) {
+        const pos = this.bot.entity?.position;
+        if (!pos || !dangerPos) return;
+
+        // Run in the opposite direction
+        const dx = pos.x - dangerPos.x;
+        const dz = pos.z - dangerPos.z;
+        const len = Math.sqrt(dx * dx + dz * dz) || 1;
+        const fleeTarget = new Vec3(
+            pos.x + (dx / len) * 30,
+            pos.y,
+            pos.z + (dz / len) * 30
+        );
+
+        console.log('[Brain] 🏃 Running away!');
+        await this.navigator.goTo(fleeTarget, 5, 8000);
+    }
+
+    async _mineNearestBlock(blockNameFragment, maxDistance = 48, maxBlocks = 4) {
         let mined = 0;
-        const botPos = this.bot.entity.position;
+        let botPos = this.bot.entity.position;
 
-        for (let i = 0; i < maxBlocks; i++) {
-            // Find matching blocks, sorted by distance, filtered to reachable Y level
-            const candidates = this.bot.findBlocks({
-                matching: b => b.name.includes(blockNameFragment),
-                maxDistance,
-                count: 20,
-            }).filter(pos => Math.abs(pos.y - botPos.y) <= 4)  // only blocks within ±4 Y
-                .sort((a, b) => a.distanceTo(botPos) - b.distanceTo(botPos));
+        // Check memory for a known source location first
+        const knownKey = `${blockNameFragment}_source`;
+        if (this.memory.knownLocations[knownKey] && mined === 0) {
+            const [kx, ky, kz] = this.memory.knownLocations[knownKey];
+            const knownPos = new Vec3(kx, ky, kz);
+            const distToKnown = botPos.distanceTo(knownPos);
+            if (distToKnown > maxDistance && distToKnown < 200) {
+                console.log(`[Brain] 🗺️ Walking to remembered ${blockNameFragment} source at [${kx},${ky},${kz}] (${Math.round(distToKnown)}b away)`);
+                await this._navigateTo(kx, ky, kz, 5);
+                botPos = this.bot.entity.position;
+            }
+        }
 
-            if (candidates.length === 0) {
-                if (mined === 0) console.log(`[Brain] ❌ No reachable "${blockNameFragment}" found within ${maxDistance} blocks`);
-                break;
+        // Exploration loop: try to find blocks, explore further if none found
+        const MAX_EXPLORE_ATTEMPTS = 3;
+
+        for (let explore = 0; explore < MAX_EXPLORE_ATTEMPTS; explore++) {
+            botPos = this.bot.entity.position;
+
+            for (let i = mined; i < maxBlocks; i++) {
+                const candidates = this.bot.findBlocks({
+                    matching: b => b.name.includes(blockNameFragment),
+                    maxDistance,
+                    count: 20,
+                }).filter(pos => Math.abs(pos.y - botPos.y) <= 6)
+                    .sort((a, b) => a.distanceTo(botPos) - b.distanceTo(botPos));
+
+                if (candidates.length === 0) break; // no blocks here, go explore
+
+                const blockPos = candidates[0];
+                const block = this.bot.blockAt(blockPos);
+                if (!block) break;
+
+                if (mined === 0) {
+                    console.log(`[Brain] 🪓 Found ${block.name} at ${blockPos} (${Math.round(blockPos.distanceTo(botPos))}b away)`);
+                }
+
+                await this._navigateTo(blockPos.x, blockPos.y, blockPos.z, 2);
+
+                const freshBlock = this.bot.blockAt(blockPos);
+                if (!freshBlock || !freshBlock.name.includes(blockNameFragment)) {
+                    console.log(`[Brain] Block gone by the time we arrived`);
+                    continue;
+                }
+
+                await this._equipBestTool(freshBlock);
+
+                try {
+                    await this.bot.lookAt(blockPos.offset(0.5, 0.5, 0.5));
+                    await this.bot.dig(freshBlock);
+
+                    // VERIFY the block is actually gone before claiming success
+                    const verifyBlock = this.bot.blockAt(blockPos);
+                    if (verifyBlock && verifyBlock.name === freshBlock.name) {
+                        console.warn(`[Brain] ⚠️ dig() returned but block still there — skipping`);
+                        continue;
+                    }
+
+                    mined++;
+                    console.log(`[Brain] ✅ Mined ${freshBlock.name} (${mined}/${maxBlocks})`);
+
+                    // Collect dropped items using entity tracking
+                    await this._collectNearbyItems(blockPos, 6, 3000);
+                } catch (e) {
+                    console.warn(`[Brain] dig failed: ${e.message}`);
+                    break;
+                }
             }
 
-            const blockPos = candidates[0];
-            const block = this.bot.blockAt(blockPos);
-            if (!block) break;
+            // Did we get enough?
+            if (mined >= maxBlocks) break;
 
-            const dist = blockPos.distanceTo(botPos);
-            if (mined === 0) {
-                console.log(`[Brain] 🪓 Found ${block.name} at ${blockPos} (${Math.round(dist)} blocks away)`);
-            }
-
-            // Walk to the block using manual movement
-            await this._walkTo(blockPos, 3, 8000);
-
-            const freshBlock = this.bot.blockAt(blockPos);
-            if (!freshBlock || !freshBlock.name.includes(blockNameFragment)) {
-                console.log(`[Brain] Block gone by the time we arrived`);
-                continue;
-            }
-
-            await this._equipBestTool(freshBlock);
-
-            try {
-                await this.bot.lookAt(blockPos.offset(0.5, 0.5, 0.5));
-                await this.bot.dig(freshBlock);
-                mined++;
-                console.log(`[Brain] ✅ Mined ${freshBlock.name} (${mined}/${maxBlocks})`);
-                await new Promise(r => setTimeout(r, 300));
-            } catch (e) {
-                console.warn(`[Brain] dig failed: ${e.message}`);
-                break;
+            // No blocks found — explore in an UNEXPLORED direction
+            if (explore < MAX_EXPLORE_ATTEMPTS - 1) {
+                const { angle, label } = this._pickUnexploredDirection();
+                const dist = 35 + Math.random() * 25;
+                const pos = this.bot.entity.position;
+                const tx = Math.round(pos.x + Math.cos(angle) * dist);
+                const tz = Math.round(pos.z + Math.sin(angle) * dist);
+                console.log(`[Brain] 🔍 No "${blockNameFragment}" nearby — exploring ${label} ${Math.round(dist)}b (attempt ${explore + 2}/${MAX_EXPLORE_ATTEMPTS})`);
+                this._addEvent(`🔍 Searched ${label} for ${blockNameFragment}`);
+                this._exploredDirs[label] = Date.now();
+                await this._navigateTo(tx, pos.y, tz, 5);
             }
         }
 
@@ -993,47 +1412,96 @@ Respond with ONLY valid JSON:
             this._addEvent(`🪓 Mined ${mined}× ${blockNameFragment}`);
             const nearby = this.bot.findBlock({ matching: b => b.name.includes(blockNameFragment), maxDistance: 8 });
             if (nearby) {
-                this.memory.knownLocations[`${blockNameFragment}_source`] = [
+                this.memory.knownLocations[knownKey] = [
                     Math.round(nearby.position.x),
                     Math.round(nearby.position.y),
                     Math.round(nearby.position.z),
                 ];
             }
+        } else {
+            console.log(`[Brain] ❌ Couldn't find any "${blockNameFragment}" after ${MAX_EXPLORE_ATTEMPTS} exploration attempts`);
         }
         return mined;
     }
 
     /**
-     * Walk toward a position using direct controls (no pathfinder).
-     * Looks at the target, walks forward with jumps, stops when within range or timeout.
+     * Collect nearby dropped items by tracking item entities.
+     * Uses bot.entities to find actual dropped item positions instead of guessing.
+     * @param {Vec3} searchCenter - Where to look for items (usually where block was mined)
+     * @param {number} radius - Max distance to search for items (default 6)
+     * @param {number} timeoutMs - Max time to spend collecting (default 3000)
      */
-    async _walkTo(targetPos, range = 3, timeoutMs = 8000) {
+    async _collectNearbyItems(searchCenter, radius = 6, timeoutMs = 3000) {
         const deadline = Date.now() + timeoutMs;
-        try {
-            while (Date.now() < deadline) {
-                const pos = this.bot.entity?.position;
-                if (!pos) break;
-                const dist = pos.distanceTo(targetPos);
-                if (dist <= range) break;
+        const pos = this.bot.entity?.position;
+        if (!pos) return 0;
 
-                await this.bot.lookAt(targetPos.offset(0.5, 0.5, 0.5));
-                this.bot.setControlState('forward', true);
-                this.bot.setControlState('jump', true);
-                await new Promise(r => setTimeout(r, 250));
+        // Wait a moment for items to spawn after block break
+        await new Promise(r => setTimeout(r, 150));
 
-                // Check if stuck (didn't move much)
-                const newPos = this.bot.entity?.position;
-                if (newPos && pos.distanceTo(newPos) < 0.05) {
-                    // Stuck — try jumping and strafing briefly
-                    this.bot.setControlState('left', true);
+        let collected = 0;
+        const maxItems = 5; // don't chase too many items
+
+        for (let attempt = 0; attempt < maxItems && Date.now() < deadline; attempt++) {
+            // Find all dropped item entities near the search center
+            const droppedItems = Object.values(this.bot.entities)
+                .filter(e => {
+                    if (!e || !e.position) return false;
+                    // Dropped items: check name, displayName, entityType, or type
+                    // In mineflayer, dropped items have name 'item' and metadata
+                    if (e.name !== 'item' && e.displayName !== 'Item' &&
+                        e.entityType !== 2 && e.type !== 'object') return false;
+                    // Check if within radius of search center
+                    const dist = e.position.distanceTo(searchCenter);
+                    return dist <= radius;
+                })
+                .sort((a, b) => {
+                    // Sort by distance to bot (pick up closest first)
+                    const dA = a.position.distanceTo(this.bot.entity.position);
+                    const dB = b.position.distanceTo(this.bot.entity.position);
+                    return dA - dB;
+                });
+
+            if (droppedItems.length === 0) {
+                // No items found — try waiting a bit in case they're still spawning
+                if (attempt === 0) {
                     await new Promise(r => setTimeout(r, 300));
-                    this.bot.setControlState('left', false);
+                    continue;
                 }
+                break;
             }
-        } finally {
-            this.bot.clearControlStates();
+
+            const item = droppedItems[0];
+            const itemDist = item.position.distanceTo(this.bot.entity.position);
+
+            // If close enough, just wait for auto-pickup
+            if (itemDist <= 2.5) {
+                await new Promise(r => setTimeout(r, 300));
+                collected++;
+                continue;
+            }
+
+            // Walk to the item's actual position
+            const itemName = item.metadata?.[8]?.itemId || item.displayName || 'item';
+            console.log(`[Brain] 📥 Walking to dropped ${itemName} at [${Math.round(item.position.x)},${Math.round(item.position.y)},${Math.round(item.position.z)}] (${Math.round(itemDist)}b away)`);
+
+            try {
+                await this.navigator.goTo(item.position, 1.5, Math.min(3000, deadline - Date.now()));
+                await new Promise(r => setTimeout(r, 300)); // wait for pickup
+                collected++;
+            } catch {
+                // Item might have despawned or been picked up already
+                break;
+            }
         }
+
+        if (collected > 0) {
+            console.log(`[Brain] 📥 Collected ${collected} dropped item(s)`);
+        }
+        return collected;
     }
+
+
 
     /** Equip the best tool for breaking a block — uses game registry, zero hardcoding */
     async _equipBestTool(block) {
@@ -1042,28 +1510,152 @@ Respond with ONLY valid JSON:
             if (best) {
                 await this.bot.equip(best, 'hand');
             } else {
-                // No correct tool — un-equip so we use bare hand
-                await this.bot.unequip('hand');
+                // No correct tool — make sure we're not holding a non-tool item
+                const held = this.bot.heldItem;
+                if (held && !held.name.includes('_axe') && !held.name.includes('_pickaxe') &&
+                    !held.name.includes('_sword') && !held.name.includes('_shovel')) {
+                    // Holding something useless (like crafting_table) — drop to bare hand
+                    try { await this.bot.unequip('hand'); } catch { }
+                }
             }
         } catch { /* no tool available, use bare hand */ }
     }
 
     async _navigateTo(x, y, z, range = 2) {
-        if (!this.bot.pathfinder) return;
-        const goal = new GoalNear(x, y, z, Math.max(range, 1));
-        const timeout = new Promise((_, reject) =>
-            setTimeout(() => {
-                try { this.bot.pathfinder.stop(); } catch { }
-                reject(new Error('pathfinding timeout (30s)'));
-            }, 30_000)
-        );
-        try {
-            await Promise.race([this.bot.pathfinder.goto(goal), timeout]);
-        } catch (e) {
-            try { this.bot.pathfinder.stop(); } catch { }
-            console.warn(`[Brain] 🧭 Navigation failed: ${e.message}`);
-            throw e;
+        const target = new Vec3(x, y, z);
+        const dist = this.bot.entity.position.distanceTo(target);
+
+        // Use mineflayer-pathfinder A* for ALL distances — it pre-calculates
+        // the full route and naturally avoids cliffs, water, lava
+        if (this.bot.pathfinder) {
+            try {
+                const { GoalNear } = require('mineflayer-pathfinder').goals;
+                this.bot.pathfinder.setGoal(new GoalNear(x, y, z, range));
+                // Timeout scales with distance
+                const timeoutMs = Math.min(Math.max(dist * 1000, 5000), 30000);
+                await new Promise((resolve) => {
+                    const timeout = setTimeout(() => {
+                        try { this.bot.pathfinder.setGoal(null); } catch { }
+                        resolve();
+                    }, timeoutMs);
+                    this.bot.once('goal_reached', () => { clearTimeout(timeout); resolve(); });
+                    this.bot.once('path_update', (r) => {
+                        if (r.status === 'noPath') { clearTimeout(timeout); resolve(); }
+                    });
+                });
+                return;
+            } catch (e) {
+                console.warn(`[Brain] Pathfinder failed, using reactive: ${e.message}`);
+            }
         }
+
+        // Reactive navigator fallback only if pathfinder unavailable/failed
+        await this.navigator.goTo(target, range, 30000);
+    }
+
+    /**
+     * LESSON EXTRACTION — the bot's real learning mechanism.
+     * After every action, analyze what happened and store useful knowledge.
+     */
+    _extractLesson(action, target, result, gained, lost, exp) {
+        const lessons = [];
+        const time = new Date().toLocaleTimeString();
+        const pos = this.bot.entity?.position;
+        const y = pos ? Math.round(pos.y) : '?';
+
+        // What tool was equipped?
+        const held = this.bot.heldItem?.name || 'bare_hands';
+
+        // ── Mining lessons ───────────────────────────────
+        if (action.startsWith('mine_')) {
+            const resource = action.replace('mine_', '');
+            if (result === 'success') {
+                const items = Object.entries(gained).map(([k, v]) => `${v} ${k}`).join(', ');
+                if (items) {
+                    lessons.push(`${action} at Y=${y}: gained ${items} (using ${held})`);
+                }
+            } else {
+                lessons.push(`${action} failed at Y=${y} — resources may not be nearby, try exploring a new direction`);
+            }
+        }
+
+        // ── Crafting lessons ─────────────────────────────
+        if (action === 'craft') {
+            const items = Object.entries(gained).map(([k, v]) => `${v} ${k}`).join(', ');
+            if (result === 'success' && items) {
+                lessons.push(`Crafted: ${items}`);
+            } else if (result === 'fail') {
+                lessons.push(`craft(${target}) failed — may need more materials or a crafting table`);
+            }
+        }
+
+        // ── Combat lessons ───────────────────────────────
+        if (action === 'attack_mob') {
+            if (result === 'success') {
+                const drops = Object.entries(gained).map(([k, v]) => `${v} ${k}`).join(', ');
+                if (drops) lessons.push(`Killed ${target} — drops: ${drops}`);
+            } else {
+                lessons.push(`Fighting ${target} failed — need better gear or avoid this mob`);
+            }
+        }
+
+        // ── Death lessons (highest priority) ─────────────
+        if (exp?.context?.result === 'death' || this.bot.health <= 0) {
+            lessons.push(`⚠️ DIED during ${action}! Avoid this situation or prepare better.`);
+        }
+
+        // ── Store lessons in permanent knowledge ─────────
+        if (lessons.length > 0) {
+            if (!this.memory.gameplayKnowledge) this.memory.gameplayKnowledge = [];
+
+            for (const lesson of lessons) {
+                const entry = `[${time}] ${lesson}`;
+                this.memory.gameplayKnowledge.push(entry);
+                console.log(`[Brain] 📝 Learned: ${lesson}`);
+            }
+
+            // Cap at 50 lessons — remove oldest
+            if (this.memory.gameplayKnowledge.length > 50) {
+                this.memory.gameplayKnowledge = this.memory.gameplayKnowledge.slice(-50);
+            }
+
+            // Also update strategy-generated lessons
+            const stratLessons = this.strategy.getLessonsForPrompt(10);
+            // Check for auto-generated rules not already in knowledge
+            if (stratLessons && !stratLessons.includes('No advanced')) {
+                const rules = stratLessons.split('\n').map(s => s.replace(/^\s*💡\s*/, '').trim()).filter(Boolean);
+                for (const rule of rules) {
+                    if (!this.memory.gameplayKnowledge.some(k => k.includes(rule))) {
+                        this.memory.gameplayKnowledge.push(`[auto] ${rule}`);
+                    }
+                }
+            }
+
+            this._persistMemory();
+        }
+
+        // Update current goal to match milestone
+        const eval_ = this.goals.evaluate(this.bot, this._readInventory(), this.memory);
+        if (eval_.current) {
+            this.memory.currentGoal = eval_.current.description;
+        }
+    }
+
+    /**
+     * Save memory to disk (debounced).
+     */
+    _persistMemory() {
+        // Debounce — don't save more than once per 5 seconds
+        if (this._saveTimer) return;
+        this._saveTimer = setTimeout(() => {
+            try {
+                const fs = require('fs');
+                fs.writeFileSync(MEMORY_FILE, JSON.stringify(this.memory, null, 2));
+            } catch (e) {
+                console.warn('[Brain] Memory save failed:', e.message);
+            }
+            this._saveTimer = null;
+        }, 5000);
     }
 
     /**
@@ -1105,7 +1697,8 @@ Respond with ONLY valid JSON:
 
             if (!logItem && plankCount < 4) { console.log('[Brain] 🔨 Auto-craft: need logs first'); await this._mineNearestBlock('log', 64); return; }
             if (plankCount < 4) { target = 'planks'; }          // need 4 for crafting table
-            else if (!hasTable) { target = 'crafting_table'; }
+            else if (!hasTable && !inv.crafting_table) { target = 'crafting_table'; }
+            else if (inv.crafting_table && !hasTableNearby) { /* have table in inventory, don't craft another */ }
             else if (plankCount < 6 && !hasPickaxe) { target = 'planks'; } // need planks for tools too
             else if (!hasPickaxe) { target = 'wooden_pickaxe'; }
             else if (!hasAxe) { target = 'wooden_axe'; }
@@ -1207,6 +1800,16 @@ Respond with ONLY valid JSON:
             const itemData = this.bot.registry.itemsByName[itemName];
             if (!itemData) { console.warn(`[Brain] Unknown item: ${itemName}`); return; }
 
+            // Walk close to the crafting table before trying to use it
+            if (craftingTableBlock && craftingTableBlock.position) {
+                const dist = this.bot.entity.position.distanceTo(craftingTableBlock.position);
+                if (dist > 2.5) {
+                    await this._navigateTo(craftingTableBlock.position.x, craftingTableBlock.position.y, craftingTableBlock.position.z, 2);
+                }
+                // Re-acquire block reference after moving
+                craftingTableBlock = this.bot.blockAt(craftingTableBlock.position);
+            }
+
             const recipes = this.bot.recipesFor(itemData.id, null, 1, craftingTableBlock || null);
             if (!recipes || recipes.length === 0) {
                 console.warn(`[Brain] No recipe for ${itemName}. Have: ${JSON.stringify(this._readInventory())}`);
@@ -1230,11 +1833,42 @@ Respond with ONLY valid JSON:
                 return;
             }
 
-            await this.bot.craft(recipes[0], 1, craftingTableBlock || null);
-            console.log(`[Brain] ✅ Crafted: ${itemName}`);
-            this._addEvent(`🔨 Crafted ${itemName}`);
+            // Determine how many to craft at once
+            // Planks/sticks: craft ALL available at once (batch)
+            // Tools/table: craft 1 (only need one)
+            let craftCount = 1;
+            if (target === 'planks') {
+                // Each log → 4 planks. Craft as many as we have logs for.
+                const logCount = liveItems().filter(i => i.name.includes('_log')).reduce((s, i) => s + i.count, 0);
+                craftCount = Math.max(1, logCount);
+            } else if (target === 'stick') {
+                // Each 2 planks → 4 sticks. Cap sticks so we don't over-craft
+                const currentSticks = liveItems().filter(i => i.name === 'stick').reduce((s, i) => s + i.count, 0);
+                if (currentSticks >= 16) {
+                    console.log(`[Brain] 🔨 Already have ${currentSticks} sticks — skipping`);
+                    return;
+                }
+                const plankCount = liveItems().filter(i => i.name.includes('_planks')).reduce((s, i) => s + i.count, 0);
+                craftCount = Math.min(Math.max(1, Math.floor(plankCount / 2)), 4); // cap at 4 batches (16 sticks)
+            }
+
+            // Validate we can actually craft this many
+            const maxRecipes = this.bot.recipesFor(itemData.id, null, craftCount, craftingTableBlock || null);
+            if (maxRecipes && maxRecipes.length > 0) {
+                await this.bot.craft(maxRecipes[0], craftCount, craftingTableBlock || null);
+                console.log(`[Brain] ✅ Crafted: ${craftCount}× ${itemName}`);
+                this._addEvent(`🔨 Crafted ${craftCount}× ${itemName}`);
+            } else {
+                // Fall back to crafting 1
+                await this.bot.craft(recipes[0], 1, craftingTableBlock || null);
+                console.log(`[Brain] ✅ Crafted: 1× ${itemName}`);
+                this._addEvent(`🔨 Crafted ${itemName}`);
+            }
+            this._lastCraftFailed = false;
         } catch (e) {
             console.warn(`[Brain] Craft error for ${itemName}: ${e.message}`);
+            this._lastCraftFailed = true;
+            this._craftCooldownUntil = Date.now() + 30_000; // backoff 30s after failure
         }
     }
 
