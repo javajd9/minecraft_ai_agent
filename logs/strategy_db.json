@@ -3,23 +3,23 @@
     "mine_wood": {
       "contexts": {
         "biome:unknown": {
-          "success": 65,
-          "fail": 56,
+          "success": 85,
+          "fail": 58,
           "death": 0
         },
         "time:day": {
-          "success": 53,
-          "fail": 42,
+          "success": 71,
+          "fail": 44,
           "death": 0
         },
         "hasHostiles:0": {
-          "success": 62,
-          "fail": 56,
+          "success": 82,
+          "fail": 58,
           "death": 0
         },
         "equipped:none": {
-          "success": 55,
-          "fail": 50,
+          "success": 73,
+          "fail": 52,
           "death": 0
         },
         "equipped:stick": {
@@ -28,7 +28,7 @@
           "death": 0
         },
         "time:night": {
-          "success": 12,
+          "success": 14,
           "fail": 14,
           "death": 0
         },
@@ -66,31 +66,41 @@
           "success": 0,
           "fail": 2,
           "death": 0
+        },
+        "equipped:crafting_table": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:acacia_log": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
         }
       },
-      "totalAttempts": 121,
-      "successCount": 65
+      "totalAttempts": 143,
+      "successCount": 85
     },
     "craft": {
       "contexts": {
         "biome:unknown": {
-          "success": 97,
-          "fail": 0,
+          "success": 133,
+          "fail": 2,
           "death": 0
         },
         "time:day": {
-          "success": 71,
-          "fail": 0,
+          "success": 93,
+          "fail": 2,
           "death": 0
         },
         "hasHostiles:0": {
-          "success": 93,
-          "fail": 0,
+          "success": 129,
+          "fail": 2,
           "death": 0
         },
         "equipped:none": {
-          "success": 80,
-          "fail": 0,
+          "success": 111,
+          "fail": 2,
           "death": 0
         },
         "equipped:crafting_table": {
@@ -114,7 +124,7 @@
           "death": 0
         },
         "time:night": {
-          "success": 26,
+          "success": 40,
           "fail": 0,
           "death": 0
         },
@@ -124,13 +134,23 @@
           "death": 0
         },
         "equipped:oak_log": {
-          "success": 3,
+          "success": 5,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_axe": {
+          "success": 2,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_pickaxe": {
+          "success": 1,
           "fail": 0,
           "death": 0
         }
       },
-      "totalAttempts": 97,
-      "successCount": 97
+      "totalAttempts": 135,
+      "successCount": 133
     },
     "build_shelter": {
       "contexts": {
@@ -238,17 +258,63 @@
     "mine_stone": {
       "contexts": {
         "biome:unknown": {
-          "success": 5,
+          "success": 17,
           "fail": 0,
           "death": 0
         },
         "time:night": {
-          "success": 5,
+          "success": 17,
           "fail": 0,
           "death": 0
         },
         "hasHostiles:0": {
-          "success": 5,
+          "success": 17,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_pickaxe": {
+          "success": 10,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:stone_pickaxe": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_axe": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 17,
+      "successCount": 17
+    },
+    "upgrade_tools": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 12,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 12,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 12,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:wooden_pickaxe": {
+          "success": 2,
           "fail": 0,
           "death": 0
         },
@@ -257,19 +323,19 @@
           "fail": 0,
           "death": 0
         },
-        "equipped:wooden_pickaxe": {
-          "success": 4,
+        "equipped:stone_pickaxe": {
+          "success": 9,
           "fail": 0,
           "death": 0
         }
       },
-      "totalAttempts": 5,
-      "successCount": 5
+      "totalAttempts": 12,
+      "successCount": 12
     },
-    "upgrade_tools": {
+    "use_skill": {
       "contexts": {
         "biome:unknown": {
-          "success": 1,
+          "success": 3,
           "fail": 0,
           "death": 0
         },
@@ -279,20 +345,25 @@
           "death": 0
         },
         "hasHostiles:0": {
-          "success": 1,
+          "success": 3,
           "fail": 0,
           "death": 0
         },
-        "equipped:wooden_pickaxe": {
-          "success": 1,
+        "equipped:none": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
+        },
+        "time:day": {
+          "success": 2,
           "fail": 0,
           "death": 0
         }
       },
-      "totalAttempts": 1,
-      "successCount": 1
+      "totalAttempts": 3,
+      "successCount": 3
     },
-    "use_skill": {
+    "eat": {
       "contexts": {
         "biome:unknown": {
           "success": 1,
@@ -321,29 +392,41 @@
   },
   "lessons": [
     {
-      "text": "craft is highly reliable (100% success).",
+      "text": "craft works best when time is night.",
       "confidence": 1
+    },
+    {
+      "text": "mine_stone works best when biome is unknown.",
+      "confidence": 1
+    },
+    {
+      "text": "mine_stone works best when time is night.",
+      "confidence": 1
+    },
+    {
+      "text": "mine_stone works best when hasHostiles is 0.",
+      "confidence": 1
+    },
+    {
+      "text": "craft is highly reliable (99% success).",
+      "confidence": 0.9851851851851852
     },
     {
       "text": "craft works best when biome is unknown.",
-      "confidence": 1
-    },
-    {
-      "text": "craft works best when time is day.",
-      "confidence": 1
+      "confidence": 0.9851851851851852
     },
     {
       "text": "craft works best when hasHostiles is 0.",
-      "confidence": 1
+      "confidence": 0.9847328244274809
     },
     {
       "text": "craft works best when equipped is none.",
-      "confidence": 1
+      "confidence": 0.9823008849557522
     },
     {
-      "text": "craft works best when time is night.",
-      "confidence": 1
+      "text": "craft works best when time is day.",
+      "confidence": 0.9789473684210527
     }
   ],
-  "lastUpdated": "2026-03-06T01:22:49.734Z"
+  "lastUpdated": "2026-03-06T22:20:20.501Z"
 }

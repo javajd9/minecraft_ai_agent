@@ -41,7 +41,8 @@ class SkillLibrary {
             'flee           — run away from nearest threat',
             'attack_mob     — fight nearest hostile mob',
             'go_to_location — navigate to coordinates (target: x,y,z)',
-            'store_items    — put items in a nearby chest',
+            'store_items    — put items in a nearby chest (crafts one if needed)',
+            'retrieve_items — get items back from a remembered chest',
             'equip_armor    — equip any armor pieces in inventory',
             'idle           — wait and observe',
         ];
@@ -317,8 +318,19 @@ class SkillLibrary {
             await this._navigateTo(bed.position, 2);
             await this.bot.sleep(bed);
             console.log('[Skills] 🛏️ Sleeping...');
-            // Wake up after night
-            this.bot.once('wake', () => console.log('[Skills] 🛏️ Woke up!'));
+            // Wait for wake event with timeout (max 90s for a full night)
+            await new Promise((resolve) => {
+                const timeout = setTimeout(() => {
+                    this.bot.removeListener('wake', onWake);
+                    resolve();
+                }, 90_000);
+                const onWake = () => {
+                    clearTimeout(timeout);
+                    console.log('[Skills] 🛏️ Woke up!');
+                    resolve();
+                };
+                this.bot.once('wake', onWake);
+            });
             return true;
         } catch (e) {
             console.warn(`[Skills] 🛏️ Sleep failed: ${e.message}`);
@@ -412,42 +424,297 @@ class SkillLibrary {
 
     // ── Store Items ──────────────────────────────────────────────────────
 
-    async storeItems() {
-        const chest = this.bot.findBlock({
-            matching: b => b.name === 'chest',
-            maxDistance: 32,
-        });
+    /**
+     * Full storage system:
+     *  1. Find a remembered chest nearby, or find one in the world
+     *  2. If none → craft a chest (8 planks) and place it
+     *  3. Deposit non-essential items
+     *  4. Remember chest location + contents in brain memory
+     *
+     * @param {AgentBrain} brain - Reference to the brain for memory persistence
+     */
+    async storeItems(brain) {
+        const KEEP_ITEMS = new Set([
+            'torch', 'coal', 'charcoal', 'stick', 'crafting_table',
+        ]);
+        const isEssential = (name) =>
+            name.includes('_pickaxe') || name.includes('_axe') ||
+            name.includes('_sword') || name.includes('_shovel') ||
+            name.includes('_hoe') || name.includes('_helmet') ||
+            name.includes('_chestplate') || name.includes('_leggings') ||
+            name.includes('_boots') || name.includes('shield') ||
+            name.includes('cooked_') || name.includes('_bed') ||
+            KEEP_ITEMS.has(name);
 
-        if (!chest) {
-            console.log('[Skills] 📦 No chest nearby');
+        // Items we want to deposit
+        const toStore = this.bot.inventory.items().filter(i => !isEssential(i.name));
+        if (toStore.length === 0) {
+            console.log('[Skills] 📦 Nothing to store (all items are essential)');
             return false;
         }
 
+        // ── Step 1: Find a chest ────────────────────────────────────────
+        let chestBlock = null;
+
+        // Check remembered chest locations first
+        if (brain?.memory?.chestContents) {
+            const botPos = this.bot.entity.position;
+            let nearest = null;
+            let nearestDist = Infinity;
+
+            for (const [key, data] of Object.entries(brain.memory.chestContents)) {
+                const [cx, cy, cz] = key.split(',').map(Number);
+                const dist = botPos.distanceTo(new Vec3(cx, cy, cz));
+                if (dist < nearestDist && dist < 200) {
+                    nearestDist = dist;
+                    nearest = { key, pos: new Vec3(cx, cy, cz), data };
+                }
+            }
+
+            if (nearest) {
+                console.log(`[Skills] 📦 Walking to remembered chest at [${nearest.key}] (${Math.round(nearestDist)}b away)`);
+                await this._navigateTo(nearest.pos, 3);
+                // Verify the chest still exists
+                chestBlock = this.bot.findBlock({
+                    matching: b => b.name === 'chest',
+                    maxDistance: 6,
+                });
+                if (!chestBlock) {
+                    console.log('[Skills] 📦 Chest gone — removing from memory');
+                    delete brain.memory.chestContents[nearest.key];
+                }
+            }
+        }
+
+        // Search the world nearby
+        if (!chestBlock) {
+            chestBlock = this.bot.findBlock({
+                matching: b => b.name === 'chest',
+                maxDistance: 32,
+            });
+        }
+
+        // ── Step 2: Craft + place a chest if needed ─────────────────────
+        if (!chestBlock) {
+            // Need 8 planks (any type) to craft a chest
+            const inv = this._readInv();
+            const plankCount = Object.entries(inv)
+                .filter(([k]) => k.includes('_planks'))
+                .reduce((s, [, v]) => s + v, 0);
+
+            if (plankCount < 8) {
+                // Try converting logs to planks first
+                const logCount = Object.entries(inv)
+                    .filter(([k]) => k.includes('_log'))
+                    .reduce((s, [, v]) => s + v, 0);
+                if (logCount >= 2) {
+                    const logItem = this.bot.inventory.items().find(i => i.name.includes('_log'));
+                    const plankName = logItem.name.replace('_log', '_planks');
+                    const plankData = this.bot.registry.itemsByName[plankName];
+                    if (plankData) {
+                        const recipes = this.bot.recipesFor(plankData.id, null, 1, null);
+                        if (recipes.length > 0) {
+                            try {
+                                await this.bot.craft(recipes[0], 2, null);
+                                console.log('[Skills] 📦 Crafted planks for chest');
+                            } catch { /* ignore */ }
+                        }
+                    }
+                } else {
+                    console.log('[Skills] 📦 Not enough wood to craft a chest');
+                    return false;
+                }
+            }
+
+            // Craft the chest
+            const chestData = this.bot.registry.itemsByName.chest;
+            if (chestData) {
+                // Chest needs a crafting table (3x3 recipe)
+                let table = this.bot.findBlock({ matching: b => b.name === 'crafting_table', maxDistance: 32 });
+                if (!table) {
+                    // Try to place one
+                    const tableItem = this.bot.inventory.items().find(i => i.name === 'crafting_table');
+                    if (tableItem) {
+                        table = await this._placeNearBot(tableItem);
+                    }
+                }
+                if (table) {
+                    await this._navigateTo(table.position, 2);
+                    const recipes = this.bot.recipesFor(chestData.id, null, 1, table);
+                    if (recipes.length > 0) {
+                        try {
+                            await this.bot.craft(recipes[0], 1, table);
+                            console.log('[Skills] 📦 Crafted a chest');
+                        } catch (e) {
+                            console.warn(`[Skills] 📦 Chest craft failed: ${e.message}`);
+                            return false;
+                        }
+                    } else {
+                        console.log('[Skills] 📦 No chest recipe available');
+                        return false;
+                    }
+                } else {
+                    console.log('[Skills] 📦 Need a crafting table to make a chest');
+                    return false;
+                }
+            }
+
+            // Place the chest
+            const chestItem = this.bot.inventory.items().find(i => i.name === 'chest');
+            if (chestItem) {
+                chestBlock = await this._placeNearBot(chestItem);
+                if (chestBlock) {
+                    console.log(`[Skills] 📦 Placed chest at [${chestBlock.position}]`);
+                } else {
+                    console.log('[Skills] 📦 Failed to place chest');
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        // ── Step 3: Deposit items ───────────────────────────────────────
         try {
-            await this._navigateTo(chest.position, 2);
-            const container = await this.bot.openContainer(chest);
+            await this._navigateTo(chestBlock.position, 2);
+            const container = await this.bot.openContainer(chestBlock);
 
-            // Store non-essential items (keep tools, food, torches)
-            const keep = new Set(['torch', 'coal', 'stick']);
-            const items = this.bot.inventory.items().filter(i =>
-                !i.name.includes('_pickaxe') && !i.name.includes('_axe') &&
-                !i.name.includes('_sword') && !i.name.includes('_shovel') &&
-                !i.name.includes('cooked_') && !keep.has(i.name)
-            );
-
+            // Re-read items to deposit (inventory may have changed from crafting)
+            const items = this.bot.inventory.items().filter(i => !isEssential(i.name));
             let stored = 0;
-            for (const item of items.slice(0, 10)) {
+            const storedItems = {};
+
+            for (const item of items.slice(0, 20)) {
                 try {
                     await container.deposit(item.type, null, item.count);
+                    storedItems[item.name] = (storedItems[item.name] || 0) + item.count;
                     stored++;
-                } catch { break; }
+                } catch { break; } // chest full
+            }
+
+            // Read what's now in the chest
+            const chestInventory = {};
+            for (const slot of container.containerItems()) {
+                if (slot) {
+                    chestInventory[slot.name] = (chestInventory[slot.name] || 0) + slot.count;
+                }
             }
 
             container.close();
+
+            // ── Step 4: Remember chest location + contents ──────────────
+            if (brain?.memory) {
+                const pos = chestBlock.position;
+                const key = `${Math.round(pos.x)},${Math.round(pos.y)},${Math.round(pos.z)}`;
+                brain.memory.chestContents[key] = {
+                    items: chestInventory,
+                    placedAt: Date.now(),
+                    lastAccess: Date.now(),
+                };
+                brain._saveMemory();
+
+                const summary = Object.entries(chestInventory)
+                    .map(([k, v]) => `${k}×${v}`)
+                    .join(', ');
+                console.log(`[Skills] 📦 Chest [${key}] now contains: ${summary}`);
+            }
+
             console.log(`[Skills] 📦 Stored ${stored} item stacks`);
             return stored > 0;
         } catch (e) {
             console.warn(`[Skills] 📦 Store failed: ${e.message}`);
+            return false;
+        }
+    }
+
+    // ── Retrieve Items ───────────────────────────────────────────────────
+
+    /**
+     * Retrieve specific items from a remembered chest.
+     * Searches brain.memory.chestContents for a chest containing the item.
+     *
+     * @param {AgentBrain} brain - Reference to the brain for memory
+     * @param {string} itemName - Item to retrieve
+     * @param {number} count - How many to withdraw (default: all available)
+     */
+    async retrieveItems(brain, itemName, count = 64) {
+        if (!brain?.memory?.chestContents) {
+            console.log('[Skills] 📦 No chest memory available');
+            return false;
+        }
+
+        // Find a chest that contains the item
+        const botPos = this.bot.entity.position;
+        let bestChest = null;
+        let bestDist = Infinity;
+
+        for (const [key, data] of Object.entries(brain.memory.chestContents)) {
+            if (data.items && data.items[itemName] && data.items[itemName] > 0) {
+                const [cx, cy, cz] = key.split(',').map(Number);
+                const dist = botPos.distanceTo(new Vec3(cx, cy, cz));
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    bestChest = { key, pos: new Vec3(cx, cy, cz), data };
+                }
+            }
+        }
+
+        if (!bestChest) {
+            console.log(`[Skills] 📦 No remembered chest contains ${itemName}`);
+            return false;
+        }
+
+        console.log(`[Skills] 📦 Found ${itemName} in chest [${bestChest.key}] (${Math.round(bestDist)}b away)`);
+
+        // Navigate to the chest
+        await this._navigateTo(bestChest.pos, 3);
+
+        const chestBlock = this.bot.findBlock({
+            matching: b => b.name === 'chest',
+            maxDistance: 6,
+        });
+
+        if (!chestBlock) {
+            console.log('[Skills] 📦 Chest not found at remembered location — removing from memory');
+            delete brain.memory.chestContents[bestChest.key];
+            brain._saveMemory();
+            return false;
+        }
+
+        try {
+            await this._navigateTo(chestBlock.position, 2);
+            const container = await this.bot.openContainer(chestBlock);
+
+            // Find the item in the chest and withdraw
+            const slot = container.containerItems().find(s => s && s.name === itemName);
+            if (slot) {
+                const withdrawCount = Math.min(count, slot.count);
+                await container.withdraw(slot.type, null, withdrawCount);
+                console.log(`[Skills] 📦 Withdrew ${withdrawCount}× ${itemName}`);
+            } else {
+                console.log(`[Skills] 📦 ${itemName} not actually in chest — updating memory`);
+            }
+
+            // Update memory with current chest contents
+            const chestInventory = {};
+            for (const s of container.containerItems()) {
+                if (s) {
+                    chestInventory[s.name] = (chestInventory[s.name] || 0) + s.count;
+                }
+            }
+            container.close();
+
+            const key = `${Math.round(chestBlock.position.x)},${Math.round(chestBlock.position.y)},${Math.round(chestBlock.position.z)}`;
+            brain.memory.chestContents[key] = {
+                items: chestInventory,
+                placedAt: bestChest.data.placedAt,
+                lastAccess: Date.now(),
+            };
+            brain._saveMemory();
+
+            return true;
+        } catch (e) {
+            console.warn(`[Skills] 📦 Retrieve failed: ${e.message}`);
             return false;
         }
     }
@@ -523,7 +790,14 @@ class SkillLibrary {
         if (!this.bot.pathfinder) return;
         const p = posOrVec instanceof Vec3 ? posOrVec : new Vec3(posOrVec.x || posOrVec[0], posOrVec.y || posOrVec[1], posOrVec.z || posOrVec[2]);
         const goal = new GoalNear(p.x, p.y, p.z, range);
-        await this.bot.pathfinder.goto(goal);
+        // Race pathfinder against a 30s timeout to prevent hanging
+        await Promise.race([
+            this.bot.pathfinder.goto(goal),
+            new Promise(resolve => setTimeout(() => {
+                try { this.bot.pathfinder.setGoal(null); } catch { }
+                resolve();
+            }, 30_000)),
+        ]);
     }
 
     async _placeNearBot(item) {

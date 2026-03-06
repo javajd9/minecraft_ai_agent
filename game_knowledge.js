@@ -65,7 +65,7 @@ class GameKnowledge {
             }
         }
 
-        // Method 3: Compare dig times — universal fallback
+        // Method 3: Compare dig times — only check actual tools, not random items
         let bestTool = null;
         let bestTime = Infinity;
 
@@ -77,7 +77,6 @@ class GameKnowledge {
 
         for (const tool of tools) {
             try {
-                // digTime(toolType, creative, aquaAffinity, haste)
                 const time = block.digTime(tool.type, false, false, false);
                 if (time < bestTime) {
                     bestTime = time;

@@ -1,29 +1,55 @@
-# 🧠 Minecraft AI Agent
+# 🧠 DIDDYBOT — Autonomous Minecraft AI Agent
 
-An autonomous Minecraft AI agent powered by a **local LLM** (Ollama) with intelligent navigation, environmental awareness, and self-improving gameplay. The agent perceives its surroundings through an advanced scanner system, makes decisions via LLM reasoning, and navigates using A* pathfinding.
+An autonomous Minecraft survival agent powered by a **local LLM** (Ollama). DIDDYBOT perceives its world through an advanced environmental scanner, makes decisions via LLM reasoning, learns from every action it takes, and progressively masters Minecraft's full survival tech tree — from punching its first tree to crafting diamond gear.
+
+> **What makes this different from a scripted bot?** DIDDYBOT uses a hybrid architecture: deterministic goal-driven behavior for reliability (pathfinding, inventory management, combat) with a local LLM layer for decision-making, planning, and in-game chat personality. It learns from its own successes and failures across sessions.
 
 ```
-Minecraft Server (Java Edition)
+Minecraft Server (Java Edition 1.21)
         │
-   Mineflayer Bot (bot.js)     ← controls the player in-game
+   Mineflayer Bot (bot.js)        ← controls the player in-game
         │
-   Brain (brain.js)            ← LLM-driven decision engine
-   ├── Scanner (scanner.js)    ← environmental perception & path analysis
-   ├── Navigator (navigation.js) ← reactive movement fallback
-   └── Ollama (local LLM)      ← reasoning & planning
+   AgentBrain (brain.js)          ← hybrid LLM + deterministic decision engine
+   ├── Scanner (scanner.js)       ← 8-dir terrain analysis, mob tracking, resource radar
+   ├── Navigator (navigation.js)  ← A* pathfinding + reactive movement fallback
+   ├── RecipePlanner (planner.js) ← recursive dependency resolver (craft/mine/smelt)
+   ├── SkillLibrary (skills.js)   ← 20+ reusable survival actions
+   ├── GoalSystem (goals.js)      ← 50-milestone tech tree progression
+   ├── Experience (experience.js) ← action timing, success rate tracking
+   ├── Strategy (strategy.js)     ← aggregated gameplay lessons
+   ├── Curriculum (curriculum.js) ← skill mastery tracking, auto-difficulty
+   ├── GameKnowledge (game_knowledge.js) ← registry-driven tool/block knowledge
+   ├── SkillManager (skill_manager.js)   ← Voyager-style LLM code generation
+   └── Ollama (local LLM)        ← reasoning, planning, chat
 ```
 
 ---
 
-## Features
+## ✨ Features
 
-- 🧠 **LLM-Powered Decision Making** — uses a local Ollama model (e.g. `llama3.1:8b`) for reasoning, planning, and natural language chat
-- 🔍 **Environmental Scanner** — 8-directional terrain analysis, path obstruction detection, mob tracking, resource radar, and dropped item detection
-- 🗺️ **A* Pathfinding** — uses `mineflayer-pathfinder` for intelligent route planning (jumping, swimming, cliff avoidance)
-- ⛏️ **Autonomous Survival** — gathers resources, crafts tools, fights mobs, and progresses through survival milestones
-- 📚 **Persistent Memory** — learns from past sessions, remembers resource locations, and extracts gameplay lessons
-- 🛡️ **Self-Preservation** — auto-eats, equips armor, flees from overwhelming threats
-- 💬 **In-Game Chat** — responds to player messages naturally via LLM
+### Intelligence
+- 🧠 **LLM-Powered Reasoning** — local Ollama model (`llama3.1:8b`) for decision-making, planning, and natural chat
+- 🔄 **Action Feedback Loop** — LLM sees exact results of its last action (success/fail, items gained/lost, duration) and self-corrects
+- 📚 **Persistent Memory** — survives restarts: resource locations, gameplay knowledge, chest contents, home base
+- 📈 **Self-Improving** — extracts lessons from every action, tracks mastery per skill, adjusts strategy over sessions
+
+### Survival
+- ⛏️ **Full Crafting System** — knows every vanilla recipe via `bot.recipesFor()`, smelting (80+ recipes), mining drops (800+ blocks from registry)
+- 🎯 **50-Milestone Tech Tree** — Wood Age → Stone → Coal & Torches → Iron → Diamond → Enchanting → Nether → End
+- 📦 **Chest Storage** — detects full inventory, crafts/places chests, remembers locations and contents, retrieves items later
+- 🏠 **Home Base** — auto-sets home when building shelter or sleeping, returns home at night
+
+### Combat & Survival
+- ⚡ **Reactive Combat (2.5s)** — fast threat scanner interrupts any task when hostiles approach, auto-equips weapons, fights or flees based on confidence
+- 🛡️ **Threat Assessment** — scores fight confidence based on health, food, weapons, armor, enemy type/count
+- 🍖 **Auto-Eat & Auto-Armor** — eats when hungry, equips best armor automatically
+- 🏃 **Smart Fleeing** — runs opposite direction from threats, sprints + jumps
+
+### Perception
+- 🔍 **8-Direction Terrain Scanner** — elevation classification, slope detection, cliff warnings
+- 🗺️ **A* Pathfinding** — `mineflayer-pathfinder` with cliff avoidance, water swimming, door opening
+- 🎯 **Resource Radar** — tracks nearby ores, wood, food animals, hostile mobs, dropped items
+- 🧭 **Exploration System** — avoids revisiting areas, scores directions by recency and position history
 
 ---
 
@@ -32,56 +58,35 @@ Minecraft Server (Java Edition)
 | Tool | Version | Notes |
 |------|---------|-------|
 | **Node.js** | ≥ 18 | `node --version` |
-| **npm** | ≥ 9 | comes with Node |
-| **Ollama** | latest | [ollama.com](https://ollama.com) — run `ollama pull llama3.1:8b` |
-| **Minecraft Java Edition** | 1.21 recommended | Any version ≥ 1.16 works |
+| **Ollama** | latest | [ollama.com](https://ollama.com) |
+| **Minecraft Java Edition** | 1.21 | Any version ≥ 1.16 should work |
 
 ---
 
-## Setup
+## Quick Start
 
 ### 1. Install dependencies
-```powershell
+```bash
 cd minecraft_ai
 npm install
 ```
 
-### 2. Install & start Ollama
-```powershell
+### 2. Start Ollama
+```bash
 ollama pull llama3.1:8b
 ollama serve
 ```
 
----
+### 3. Start Minecraft
+- Create a new world → Open to LAN → Allow Cheats: ON → Start
+- Note the port (update `config.json` if not `25565`)
 
-## Running
-
-> Start components in order: Minecraft → Ollama → Node server.
-
-### Step 1 — Start Minecraft
-**Singleplayer LAN** (easiest):
-- Create a new world (any type)
-- Open to LAN: `Escape → Open to LAN → Allow Cheats: ON → Start`
-- Note the port; update `config.json` if not `25565`
-
-**Dedicated server** (alternative):
-- Use [PaperMC](https://papermc.io/downloads) with `online-mode=false`
-
-### Step 2 — Start the AI agent
-```powershell
+### 4. Launch the agent
+```bash
 node server.js
 ```
-Expected output:
-```
-[Server] Starting...
-[Server] WebSocket listening on ws://localhost:3001
-[Bot] Spawned at {"x":0,"y":64,"z":0}
-[Bot] ✅ Pathfinder configured
-[Brain] Agent memory loaded.
-[Brain] Thinking every 3s. Session #1
-```
 
-The agent will immediately start playing — gathering wood, crafting tools, and exploring.
+The agent will immediately start playing — gathering wood, crafting tools, building shelter, and progressing through the tech tree.
 
 ---
 
@@ -89,65 +94,82 @@ The agent will immediately start playing — gathering wood, crafting tools, and
 
 ```
 minecraft_ai/
-├── config.json        ← server connection settings
-├── package.json       ← Node.js dependencies
-├── server.js          ← WebSocket server & bot initialization
-├── bot.js             ← Mineflayer bot setup
-├── brain.js           ← LLM decision engine, actions, and memory
-├── scanner.js         ← Environmental perception & path data
-├── navigation.js      ← Reactive movement fallback
-└── agent_memory.json  ← Persistent memory (auto-created)
+├── config.json          ← server connection settings
+├── server.js            ← WebSocket server, bot lifecycle, episode management
+├── bot.js               ← Mineflayer bot setup (pathfinder, auto-eat, armor)
+├── brain.js             ← core decision engine (LLM + deterministic hybrid)
+├── scanner.js           ← environmental perception (terrain, mobs, resources)
+├── navigation.js        ← reactive movement fallback (stuck detection, swimming)
+├── planner.js           ← recursive recipe dependency resolver
+├── skills.js            ← 20+ reusable survival skills (mine, craft, smelt, build...)
+├── goals.js             ← 50-milestone progression system
+├── game_knowledge.js    ← registry-driven tool/block knowledge (zero hardcoding)
+├── experience.js        ← action timing and success rate tracking
+├── strategy.js          ← aggregated lessons and strategy adjustment
+├── curriculum.js        ← skill mastery tracking with auto-difficulty
+├── skill_manager.js     ← Voyager-style LLM code generation for novel tasks
+├── logger.js            ← structured logging (steps, episodes, deaths, chat)
+├── agent_memory.json    ← persistent memory (auto-created)
+├── train.py             ← PPO reinforcement learning training script
+├── env.py               ← Gym environment wrapper for RL training
+└── logs/                ← training logs, step data, episodes
 ```
 
 ---
 
 ## Configuration (`config.json`)
 
-| Key | Default | Description |
-|-----|---------|-------------|
-| `mcHost` | `localhost` | Minecraft server hostname |
-| `mcPort` | `25565` | Minecraft server port |
-| `mcVersion` | `1.21` | Minecraft protocol version |
-| `wsPort` | `3001` | WebSocket server port |
-| `botUsername` | `rl_agent` | In-game player name |
+```json
+{
+  "mcHost": "localhost",
+  "mcPort": 25565,
+  "mcVersion": "1.21",
+  "wsPort": 3001,
+  "stepMs": 50,
+  "maxSteps": 2000,
+  "botUsername": "DIDDYBOT"
+}
+```
 
 ---
 
 ## Architecture
 
-### Scanner (`scanner.js`)
-The scanner provides the agent's "eyes" — a structured view of the world:
-- **Surroundings scan**: 8-direction terrain analysis with elevation classification (slopes, mountains, cliffs)
-- **Path data** (`getPathData()`): Structured obstruction info used by BOTH the LLM and navigator — single source of truth
-- **Resource radar**: Nearby blocks, hostile mobs, food animals, dropped items
-- **Path obstructions**: What's blocking each direction, required tools, wall heights
+### Decision Loop (every 30 seconds)
+```
+1. Build Context    → scanner reads world, inventory, health, time
+2. Threat Check     → reactive combat if hostiles < 8 blocks (2.5s fast-loop)
+3. LLM Decision     → Ollama receives full context, returns action + reasoning
+4. Goal Fallback    → if LLM is slow, use deterministic tech tree progression
+5. Execute Action   → route to skill handler (mine, craft, explore, fight...)
+6. Verify Result    → compare inventory before/after, detect false positives
+7. Feedback Loop    → store result for next LLM prompt, extract lessons
+```
 
-### Brain (`brain.js`)
-The decision engine runs a think loop every 3 seconds:
-1. Scanner builds environmental context
-2. LLM receives context + inventory + goals + memory
-3. LLM responds with action + reasoning + chat
-4. Brain executes the action (mine, craft, explore, fight, flee)
-5. Results feed back into memory for learning
+### Key Design Decisions
 
-### Navigator (`navigation.js`)
-Reactive movement fallback when A* pathfinding is unavailable:
-- Velocity-based auto-jump for small terrain steps
-- Tool-aware digging (won't break stone without a pickaxe)
-- Water swimming toward target
-- Stuck detection with escalating strategies
+| Decision | Rationale |
+|----------|-----------|
+| LLM fires non-blocking | Bot keeps moving during 2-5s inference time |
+| Craft verified by inventory diff | Prevents false positive reporting |
+| Combat on 2.5s timer | 30s think cycle too slow for mob threats |
+| Crafting checked before mining | Prevents mining dead bushes for sticks |
+| Registry-driven knowledge | Zero hardcoded block/tool data — works with any MC version |
+| Memory persists to disk | Agent remembers across restarts (home base, chest contents, lessons) |
 
 ---
 
 ## Troubleshooting
 
-**Bot won't connect**
-- Ensure `mcVersion` in `config.json` matches your server exactly
-- For LAN, set `mcPort` to the port shown in chat
+| Problem | Solution |
+|---------|----------|
+| Bot won't connect | Ensure `mcVersion` matches your server exactly |
+| Bot sits idle | Check Ollama is running: `ollama serve` |
+| `mineflayer` not found | Run `npm install` |
+| Bot dies constantly at night | Wait for it to build shelter — it learns to go home |
 
-**Bot sits idle**
-- Check that Ollama is running: `ollama serve`
-- Verify the model is installed: `ollama list`
+---
 
-**`mineflayer` module not found**
-- Run `npm install` in the project directory
+## License
+
+MIT

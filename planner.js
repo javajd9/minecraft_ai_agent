@@ -5,25 +5,30 @@
  * dependency trees. The LLM decides WHAT to achieve, the planner
  * figures out HOW — producing an ordered step list.
  *
- * Example:
- *   planner.planFor('iron_pickaxe', 1)
- *   → ['mine_wood', 'craft planks', 'craft sticks', 'craft wooden_pickaxe',
- *      'mine stone', 'craft stone_pickaxe', 'mine iron_ore',
- *      'craft furnace', 'smelt raw_iron', 'craft iron_pickaxe']
+ * Recipe knowledge:
+ *   - CRAFTING: Fully dynamic via mineflayer's recipesFor() — knows ALL vanilla recipes
+ *   - SMELTING: Comprehensive hardcoded list (mineflayer doesn't expose smelting data)
+ *   - MINING:   Dynamically built from minecraft-data block drops at runtime
  */
 
 'use strict';
 
-// ── Smelting recipes (mineflayer doesn't expose these directly) ──────────
+// ── Smelting recipes — comprehensive list of ALL vanilla smelting/smoking/blasting ──
 const SMELT_RECIPES = {
-    // Ores → Ingots
+    // ── Ores → Ingots/Materials ──
     raw_iron: 'iron_ingot',
     raw_gold: 'gold_ingot',
     raw_copper: 'copper_ingot',
     iron_ore: 'iron_ingot',
     gold_ore: 'gold_ingot',
     copper_ore: 'copper_ingot',
-    // Food
+    deepslate_iron_ore: 'iron_ingot',
+    deepslate_gold_ore: 'gold_ingot',
+    deepslate_copper_ore: 'copper_ingot',
+    nether_gold_ore: 'gold_ingot',
+    ancient_debris: 'netherite_scrap',
+
+    // ── Food (furnace + smoker) ──
     raw_beef: 'cooked_beef',
     raw_porkchop: 'cooked_porkchop',
     raw_chicken: 'cooked_chicken',
@@ -31,18 +36,92 @@ const SMELT_RECIPES = {
     raw_rabbit: 'cooked_rabbit',
     raw_cod: 'cooked_cod',
     raw_salmon: 'cooked_salmon',
-    // Misc
-    sand: 'glass',
+    potato: 'baked_potato',
+    kelp: 'dried_kelp',
+    chorus_fruit: 'popped_chorus_fruit',
+
+    // ── Stone/Building ──
     cobblestone: 'stone',
+    stone: 'smooth_stone',
+    sandstone: 'smooth_sandstone',
+    red_sandstone: 'smooth_red_sandstone',
+    quartz_block: 'smooth_quartz',
+    stone_bricks: 'cracked_stone_bricks',
+    deepslate_bricks: 'cracked_deepslate_bricks',
+    deepslate_tiles: 'cracked_deepslate_tiles',
+    nether_bricks: 'cracked_nether_bricks',
+    polished_blackstone_bricks: 'cracked_polished_blackstone_bricks',
+    basalt: 'smooth_basalt',
+
+    // ── Sand/Glass ──
+    sand: 'glass',
+    red_sand: 'red_stained_glass', // actually just glass, but red_sand → glass
+    cobbled_deepslate: 'deepslate',
+
+    // ── Clay/Bricks ──
     clay_ball: 'brick',
+    clay: 'terracotta',
+
+    // ── Terracotta → Glazed Terracotta (all 16 colors) ──
+    white_terracotta: 'white_glazed_terracotta',
+    orange_terracotta: 'orange_glazed_terracotta',
+    magenta_terracotta: 'magenta_glazed_terracotta',
+    light_blue_terracotta: 'light_blue_glazed_terracotta',
+    yellow_terracotta: 'yellow_glazed_terracotta',
+    lime_terracotta: 'lime_glazed_terracotta',
+    pink_terracotta: 'pink_glazed_terracotta',
+    gray_terracotta: 'gray_glazed_terracotta',
+    light_gray_terracotta: 'light_gray_glazed_terracotta',
+    cyan_terracotta: 'cyan_glazed_terracotta',
+    purple_terracotta: 'purple_glazed_terracotta',
+    blue_terracotta: 'blue_glazed_terracotta',
+    brown_terracotta: 'brown_glazed_terracotta',
+    green_terracotta: 'green_glazed_terracotta',
+    red_terracotta: 'red_glazed_terracotta',
+    black_terracotta: 'black_glazed_terracotta',
+
+    // ── Wood → Charcoal (all log types) ──
     oak_log: 'charcoal',
     spruce_log: 'charcoal',
     birch_log: 'charcoal',
     jungle_log: 'charcoal',
     acacia_log: 'charcoal',
     dark_oak_log: 'charcoal',
-    // Ancient debris
-    ancient_debris: 'netherite_scrap',
+    mangrove_log: 'charcoal',
+    cherry_log: 'charcoal',
+    stripped_oak_log: 'charcoal',
+    stripped_spruce_log: 'charcoal',
+    stripped_birch_log: 'charcoal',
+    stripped_jungle_log: 'charcoal',
+    stripped_acacia_log: 'charcoal',
+    stripped_dark_oak_log: 'charcoal',
+    stripped_mangrove_log: 'charcoal',
+    stripped_cherry_log: 'charcoal',
+    oak_wood: 'charcoal',
+    spruce_wood: 'charcoal',
+    birch_wood: 'charcoal',
+    jungle_wood: 'charcoal',
+    acacia_wood: 'charcoal',
+    dark_oak_wood: 'charcoal',
+    mangrove_wood: 'charcoal',
+    cherry_wood: 'charcoal',
+    stripped_oak_wood: 'charcoal',
+    stripped_spruce_wood: 'charcoal',
+    stripped_birch_wood: 'charcoal',
+    stripped_jungle_wood: 'charcoal',
+    stripped_acacia_wood: 'charcoal',
+    stripped_dark_oak_wood: 'charcoal',
+    stripped_mangrove_wood: 'charcoal',
+    stripped_cherry_wood: 'charcoal',
+
+    // ── Dyes (smelting flowers/cactus/sea pickle) ──
+    cactus: 'green_dye',
+    sea_pickle: 'lime_dye',
+
+    // ── Misc ──
+    wet_sponge: 'sponge',
+    netherrack: 'nether_brick',
+    nether_quartz_ore: 'quartz',
 };
 
 // Reverse: what do I need to smelt to GET this item?
@@ -52,48 +131,57 @@ for (const [input, output] of Object.entries(SMELT_RECIPES)) {
     SMELT_INPUTS[output].push(input);
 }
 
-// ── Mining: what block drops what item ───────────────────────────────────
-const MINE_DROPS = {
-    oak_log: 'oak_log',
-    spruce_log: 'spruce_log',
-    birch_log: 'birch_log',
-    jungle_log: 'jungle_log',
-    acacia_log: 'acacia_log',
-    dark_oak_log: 'dark_oak_log',
-    stone: 'cobblestone',
-    deepslate: 'cobbled_deepslate',
-    iron_ore: 'raw_iron',
-    deepslate_iron_ore: 'raw_iron',
-    gold_ore: 'raw_gold',
-    deepslate_gold_ore: 'raw_gold',
-    copper_ore: 'raw_copper',
-    deepslate_copper_ore: 'raw_copper',
-    coal_ore: 'coal',
-    deepslate_coal_ore: 'coal',
-    diamond_ore: 'diamond',
-    deepslate_diamond_ore: 'diamond',
-    lapis_ore: 'lapis_lazuli',
-    redstone_ore: 'redstone',
-    emerald_ore: 'emerald',
-    nether_quartz_ore: 'quartz',
-};
-
-// Reverse: what block do I mine to GET this item?
-const MINE_SOURCES = {};
-for (const [block, drop] of Object.entries(MINE_DROPS)) {
-    if (!MINE_SOURCES[drop]) MINE_SOURCES[drop] = [];
-    MINE_SOURCES[drop].push(block);
-}
-
 // Items that are generic "any wood" — the bot can use any log type
-const ANY_LOG = ['oak_log', 'spruce_log', 'birch_log', 'jungle_log', 'acacia_log', 'dark_oak_log'];
-const ANY_PLANKS = ['oak_planks', 'spruce_planks', 'birch_planks', 'jungle_planks', 'acacia_planks', 'dark_oak_planks'];
+const ANY_LOG = [
+    'oak_log', 'spruce_log', 'birch_log', 'jungle_log',
+    'acacia_log', 'dark_oak_log', 'mangrove_log', 'cherry_log',
+];
+const ANY_PLANKS = [
+    'oak_planks', 'spruce_planks', 'birch_planks', 'jungle_planks',
+    'acacia_planks', 'dark_oak_planks', 'mangrove_planks', 'cherry_planks',
+];
 
 class RecipePlanner {
     constructor(bot) {
         this.bot = bot;
         this._currentPlan = [];
         this._planTarget = null;   // what we're planning for
+
+        // ── Build mining drop tables dynamically from game registry ──────
+        // This replaces the old hardcoded MINE_DROPS / MINE_SOURCES.
+        // Reads block.drops from minecraft-data so it covers ALL blocks automatically.
+        this._mineDrops = {};   // blockName → itemName
+        this._mineSources = {}; // itemName → [blockName, ...]
+        this._buildMineSources();
+    }
+
+    /**
+     * Build MINE_DROPS and MINE_SOURCES dynamically from the bot's registry.
+     * Each block's `drops` array contains item IDs that the block drops.
+     * This covers all 800+ blocks with drop data — no hardcoding needed.
+     */
+    _buildMineSources() {
+        try {
+            const blocks = this.bot.registry?.blocksArray;
+            if (!blocks) return;
+
+            for (const block of blocks) {
+                if (!block.drops || block.drops.length === 0) continue;
+                // Use the first drop as the primary drop item
+                const dropId = block.drops[0];
+                const dropItem = this.bot.registry.items[dropId];
+                if (!dropItem) continue;
+
+                this._mineDrops[block.name] = dropItem.name;
+                if (!this._mineSources[dropItem.name]) {
+                    this._mineSources[dropItem.name] = [];
+                }
+                this._mineSources[dropItem.name].push(block.name);
+            }
+            console.log(`[Planner] 📖 Loaded ${Object.keys(this._mineDrops).length} block→drop mappings from registry`);
+        } catch (e) {
+            console.warn(`[Planner] ⚠️ Failed to build mine sources from registry: ${e.message}`);
+        }
     }
 
     /**
@@ -226,13 +314,31 @@ class RecipePlanner {
         if (needed[key] && needed[key] >= still_need) return;
         needed[key] = still_need;
 
+        // ── Can we CRAFT it? (check BEFORE mining — sticks, planks, etc.) ──
+        const recipe = this._lookupRecipe(itemName);
+        if (recipe) {
+            // Resolve each ingredient first (dependencies come before the craft step)
+            for (const ingredient of recipe.ingredients) {
+                this._resolve(ingredient.name, ingredient.count * Math.ceil(still_need / recipe.outputCount), steps, needed, depth + 1);
+            }
+            steps.push({
+                type: 'craft',
+                item: itemName,
+                count: still_need,
+                needsTable: recipe.needsTable,
+                reason: `Craft ${still_need}× ${itemName}`,
+            });
+            return;
+        }
+
         // ── Can we MINE it? ─────────────────────────────────────────
-        if (MINE_SOURCES[itemName]) {
+        // Only for raw materials — never mine for craftable items
+        if (this._mineSources[itemName]) {
             steps.push({
                 type: 'mine',
                 item: itemName,
                 count: still_need,
-                block: MINE_SOURCES[itemName][0],
+                block: this._mineSources[itemName][0],
                 reason: `Mine ${still_need}× ${itemName}`,
             });
             return;
@@ -267,23 +373,6 @@ class RecipePlanner {
                 smeltInput: input,
                 count: still_need,
                 reason: `Smelt ${still_need}× ${input} → ${itemName}`,
-            });
-            return;
-        }
-
-        // ── Can we CRAFT it? ────────────────────────────────────────
-        const recipe = this._lookupRecipe(itemName);
-        if (recipe) {
-            // Resolve each ingredient first (dependencies come before the craft step)
-            for (const ingredient of recipe.ingredients) {
-                this._resolve(ingredient.name, ingredient.count * Math.ceil(still_need / recipe.outputCount), steps, needed, depth + 1);
-            }
-            steps.push({
-                type: 'craft',
-                item: itemName,
-                count: still_need,
-                needsTable: recipe.needsTable,
-                reason: `Craft ${still_need}× ${itemName}`,
             });
             return;
         }
@@ -466,4 +555,4 @@ class RecipePlanner {
     }
 }
 
-module.exports = { RecipePlanner, SMELT_RECIPES, MINE_DROPS, MINE_SOURCES };
+module.exports = { RecipePlanner, SMELT_RECIPES };

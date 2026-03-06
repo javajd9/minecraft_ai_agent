@@ -56,6 +56,8 @@ const DEFAULT_MEMORY = {
     knownLocations: {},      // session-scoped coordinates (cleared on restart)
     gameplayKnowledge: [],   // PERSISTENT: map-independent facts the bot learns
     inventory: {},           // last-known inventory snapshot
+    chestContents: {},       // PERSISTENT: { "x,y,z": { items: {name: count}, placedAt: timestamp } }
+    homeBase: null,          // PERSISTENT: [x, y, z] — the bot's home position
     sessionCount: 0,
 };
 
@@ -91,6 +93,9 @@ class AgentBrain {
 
         // Task commitment — prevents flip-flopping between actions
         this._currentTask = null;      // { action, target, startedAt, lockedUntil }
+
+        // Action result feedback — tracks last action for LLM context
+        this._lastActionResult = null; // { action, target, result, gained, lost, duration }
 
         // Exploration memory — track which directions we've explored recently
         this._exploredDirs = {};  // { 'N': timestamp, 'NE': timestamp, ... }
@@ -143,6 +148,12 @@ class AgentBrain {
         // Increase path computation timeout (default 40ms is too low for complex terrain)
         this.bot.pathfinder.thinkTimeout = 5000;
 
+        // Remove any previous listeners to prevent double-registration on respawn
+        this.bot.removeAllListeners('chat');
+        this.bot.removeAllListeners('diggingCompleted');
+        this.bot.removeAllListeners('death');
+        this.bot.inventory.removeAllListeners('updateSlot');
+
         // Listen for chat
         this.bot.on('chat', (username, message) => {
             if (username === this.config.botUsername) return;
@@ -178,12 +189,46 @@ class AgentBrain {
         this.timer = setInterval(() => this._think(), THINK_INTERVAL);
         console.log(`[Brain] Thinking every ${THINK_INTERVAL / 1000}s. Session #${this.memory.sessionCount}`);
 
+        // ── Reactive combat check — runs every 2.5s (much faster than 30s think) ──
+        this._combatCheckTimer = setInterval(() => {
+            if (this.busy) return;
+            const { hostiles, closestDist, confidence } = this._assessThreat();
+            if (hostiles.length === 0 || closestDist > 8) return;
+
+            const closest = hostiles[0];
+            const mobName = closest.name || 'hostile';
+            console.log(`[Brain] ⚡ COMBAT INTERRUPT: ${mobName} at ${closestDist}b (confidence: ${confidence}%)`);
+
+            // Break any current task
+            this._currentTask = null;
+
+            // Immediately fight or flee
+            this.busy = true;
+            (async () => {
+                try {
+                    if (confidence < 40 || (mobName === 'creeper' && closestDist < 6)) {
+                        this._addEvent(`🏃 Emergency flee from ${mobName}`);
+                        await this._fleeFrom(closest.position);
+                    } else {
+                        this._addEvent(`⚔️ Engaging ${mobName}`);
+                        await this._equipBestWeapon();
+                        await this._huntEntity(closest);
+                    }
+                } catch (e) {
+                    console.warn(`[Brain] Combat interrupt failed: ${e.message}`);
+                } finally {
+                    this.busy = false;
+                }
+            })();
+        }, 2500);
+
         // First think after 8 seconds (let bot fully spawn)
         setTimeout(() => this._think(), 8000);
     }
 
     stop() {
         if (this.timer) clearInterval(this.timer);
+        if (this._combatCheckTimer) clearInterval(this._combatCheckTimer);
         this._saveMemory();
         console.log('[Brain] Stopped. Memory saved.');
     }
@@ -368,11 +413,28 @@ class AgentBrain {
                 if (!gotAnything) { result = 'fail'; detail = `No ${targetBlock} gathered`; }
             }
 
+            // Check if craft actions actually created anything
+            if (action === 'craft') {
+                const gotAnything = Object.keys(gained).length > 0;
+                if (!gotAnything) { result = 'fail'; detail = `Craft produced nothing`; }
+            }
+
             const exp = this.experience.endAction(result, detail, this.bot);
             if (exp) this.strategy.recordOutcome(action, result, exp.context);
 
             // Track mastery for curriculum
             this.curriculum.recordOutcome(action, result === 'success');
+
+            // ── Store action result for LLM feedback loop ──
+            const gainedStr = Object.entries(gained).map(([k, v]) => `+${v} ${k}`).join(', ');
+            const lostStr = Object.entries(lost).map(([k, v]) => `-${v} ${k}`).join(', ');
+            this._lastActionResult = {
+                action, target, result,
+                detail: detail || (result === 'success' ? 'completed' : 'unknown'),
+                gained: gainedStr || 'nothing',
+                lost: lostStr || 'nothing',
+                duration: exp ? `${Math.round(exp.duration / 1000)}s` : '?',
+            };
 
             // ── Lesson extraction — REAL learning from every action ──
             this._extractLesson(action, target, result, gained, lost, exp);
@@ -487,7 +549,15 @@ class AgentBrain {
             }
         }
 
-        // ── Fallback: use SkillManager for advanced milestones ──────────
+        // ── Fallback: use the milestone's own suggested action ──────────
+        // Only fall through to use_skill for truly novel milestones
+        if (milestone.suggestedAction && milestone.suggestedAction !== 'use_skill') {
+            return {
+                action: milestone.suggestedAction,
+                target: target?.item || '',
+                reason: `${milestone.name}: ${milestone.description}`
+            };
+        }
         return {
             action: 'use_skill',
             target: milestone.description,
@@ -564,16 +634,31 @@ class AgentBrain {
         const knowledge = (this.memory.gameplayKnowledge || []).slice(-4)
             .map(k => '  • ' + k).join('\n') || '  None yet.';
 
+        // Action result feedback — tell the LLM what happened last time
+        let feedbackStr = '';
+        if (this._lastActionResult) {
+            const r = this._lastActionResult;
+            const emoji = r.result === 'success' ? '✅' : '❌';
+            feedbackStr = `\nLAST ACTION: ${emoji} ${r.action}(${r.target || ''}) → ${r.result} (${r.duration})\n  Gained: ${r.gained} | Lost: ${r.lost}${r.detail && r.result !== 'success' ? `\n  Reason: ${r.detail}` : ''}`;
+        }
+
+        // Home base info
+        const homeStr = this.memory.homeBase
+            ? `HOME BASE: [${this.memory.homeBase.join(', ')}]`
+            : 'HOME BASE: not set (build shelter or place bed to set home)';
+
         return `You are ${this.config.botUsername}, a Minecraft survival AI.
 
 PRIORITY RULES (follow in order):
   1. DANGER: health < 10 → eat food or flee. Always.
   2. HUNGER: food < 14 → eat if you have food.
-  3. NIGHT: if night, build shelter / sleep / place torches. Don't explore in the dark.
+  3. NIGHT: if night, go_home (if set) or build shelter. Don't explore in the dark.
   4. GOAL: follow the survival progression below.
   5. EXPLORE: if stuck or nothing to do, explore new areas.
+${feedbackStr}
 
 STATUS: ${posStr} | ❤️ ${health}/20 | 🍖 ${food}/20 | ${timeLabel}
+${homeStr}
 INVENTORY: ${invStr}
 ${planInfo}
 ${reply}
@@ -589,7 +674,7 @@ ${memories}
 TIPS:
 ${knowledge}
 
-ACTIONS: ${this.skills.getSkillList().map(s => s.split('—')[0].trim()).join(', ')}, use_skill
+ACTIONS: ${this.skills.getSkillList().map(s => s.split('—')[0].trim()).join(', ')}, go_home, use_skill
 
 Respond with ONLY this JSON:
 {
@@ -648,6 +733,62 @@ Respond with ONLY this JSON:
 
     // ── Action executor ────────────────────────────────────────────────────────
 
+    /**
+     * Clear soft blocks ONLY on the direct path between the bot and the target.
+     * Only clears leaves/vines that actually block line-of-sight or walking.
+     * Capped at MAX_CLEAR blocks to avoid wasting time.
+     */
+    async _clearObstacles(targetPos) {
+        const SOFT_BLOCKS = new Set([
+            'oak_leaves', 'birch_leaves', 'spruce_leaves', 'jungle_leaves',
+            'acacia_leaves', 'dark_oak_leaves', 'mangrove_leaves', 'cherry_leaves',
+            'azalea_leaves', 'flowering_azalea_leaves',
+            'vine', 'twisting_vines', 'weeping_vines', 'cave_vines',
+        ]);
+
+        const MAX_CLEAR = 3; // never waste time clearing more than 3 blocks
+        const botPos = this.bot.entity.position;
+        const cleared = [];
+
+        // Walk from bot to target in unit steps, check each voxel on the path
+        const dir = targetPos.minus(botPos);
+        const dist = dir.norm();
+        if (dist < 0.5) return; // already at target
+
+        const step = dir.scaled(1 / dist); // unit vector
+        const steps = Math.min(Math.ceil(dist), 8); // don't check >8 blocks out
+
+        const checked = new Set();
+        for (let s = 1; s <= steps && cleared.length < MAX_CLEAR; s++) {
+            // Check the voxel on the path, plus the one above it (head height)
+            for (const yOff of [0, 1]) {
+                const checkPos = botPos.offset(
+                    Math.round(step.x * s),
+                    Math.round(step.y * s) + yOff,
+                    Math.round(step.z * s)
+                );
+                const key = `${checkPos.x},${checkPos.y},${checkPos.z}`;
+                if (checked.has(key)) continue;
+                checked.add(key);
+
+                if (checkPos.equals(targetPos)) continue; // don't dig the target itself
+
+                const block = this.bot.blockAt(checkPos);
+                if (!block || !SOFT_BLOCKS.has(block.name)) continue;
+
+                try {
+                    await this.bot.dig(block, true);
+                    cleared.push(block.name);
+                } catch { /* block may have already despawned */ }
+            }
+        }
+
+        if (cleared.length > 0) {
+            console.log(`[Brain] 🍃 Cleared ${cleared.length} path obstacle(s): ${[...new Set(cleared)].join(', ')}`);
+        }
+    }
+
+
 
     async _executeAction(action, target) {
         this._stopMovement();
@@ -703,7 +844,7 @@ Respond with ONLY this JSON:
                         await this._huntEntity(mob);
                     } else {
                         console.log('[Brain] No hostile mobs nearby');
-                        this._exploreRandomly();
+                        await this._exploreRandomly();
                     }
                     break;
                 }
@@ -736,7 +877,12 @@ Respond with ONLY this JSON:
                     await this.skills.buildShelter();
                     if (this.bot.entity?.position) {
                         const p = this.bot.entity.position;
-                        this.memory.knownLocations['shelter'] = [Math.round(p.x + 2), Math.round(p.y), Math.round(p.z + 2)];
+                        const homePos = [Math.round(p.x + 2), Math.round(p.y), Math.round(p.z + 2)];
+                        this.memory.knownLocations['shelter'] = homePos;
+                        // Auto-set home base
+                        this.memory.homeBase = homePos;
+                        console.log(`[Brain] 🏠 Home base set at [${homePos.join(', ')}]`);
+                        this._addEvent(`🏠 Set home base at [${homePos.join(', ')}]`);
                         this._saveMemory();
                     }
                     break;
@@ -745,6 +891,13 @@ Respond with ONLY this JSON:
                     break;
                 case 'sleep':
                     await this.skills.sleep();
+                    // If bot found a bed, set home base near it
+                    if (!this.memory.homeBase && this.bot.entity?.position) {
+                        const p = this.bot.entity.position;
+                        this.memory.homeBase = [Math.round(p.x), Math.round(p.y), Math.round(p.z)];
+                        console.log(`[Brain] 🏠 Home base set near bed`);
+                        this._saveMemory();
+                    }
                     break;
                 case 'upgrade_tools':
                     await this.skills.upgradeTools();
@@ -753,7 +906,10 @@ Respond with ONLY this JSON:
                     await this.skills.flee();
                     break;
                 case 'store_items':
-                    await this.skills.storeItems();
+                    await this.skills.storeItems(this);
+                    break;
+                case 'retrieve_items':
+                    await this.skills.retrieveItems(this, target);
                     break;
                 case 'equip_armor':
                     await this.skills.equipArmor();
@@ -763,6 +919,26 @@ Respond with ONLY this JSON:
                     console.log('[Brain] 💤 Idling — observing surroundings');
                     this._stopMovement();
                     break;
+
+                case 'go_home': {
+                    if (this.memory.homeBase) {
+                        const [hx, hy, hz] = this.memory.homeBase;
+                        const dist = this.bot.entity?.position?.distanceTo(new Vec3(hx, hy, hz)) || 0;
+                        console.log(`[Brain] 🏠 Going home [${hx}, ${hy}, ${hz}] (${Math.round(dist)}b)`);
+                        this._addEvent(`🏠 Heading home`);
+                        await this._navigateTo(hx, hy, hz, 3);
+                    } else {
+                        console.log('[Brain] 🏠 No home base set — building shelter instead');
+                        await this.skills.buildShelter();
+                        if (this.bot.entity?.position) {
+                            const p = this.bot.entity.position;
+                            this.memory.homeBase = [Math.round(p.x), Math.round(p.y), Math.round(p.z)];
+                            console.log(`[Brain] 🏠 Home base set at [${this.memory.homeBase.join(', ')}]`);
+                            this._saveMemory();
+                        }
+                    }
+                    break;
+                }
 
                 case 'use_skill': {
                     // Voyager-style: pass task description to skill manager
@@ -1151,6 +1327,13 @@ Respond with ONLY this JSON:
 
                 await this._navigateTo(blockPos.x, blockPos.y, blockPos.z, 2);
 
+                // Only clear path obstacles for tree logs (leaves can block access)
+                // Skip if we're already within dig range — no need to clear
+                const distToBlock = this.bot.entity.position.distanceTo(blockPos);
+                if (block.name.includes('_log') && distToBlock > 4) {
+                    await this._clearObstacles(blockPos);
+                }
+
                 const freshBlock = this.bot.blockAt(blockPos);
                 if (!freshBlock || !freshBlock.name.includes(blockNameFragment)) {
                     console.log(`[Brain] Block gone by the time we arrived`);
@@ -1172,6 +1355,13 @@ Respond with ONLY this JSON:
                     mined++;
                     console.log(`[Brain] ✅ Mined ${freshBlock.name} (${mined}/${maxBlocks})`);
                     await this._collectNearbyItems(blockPos, 6, 3000);
+
+                    // Auto-store: if inventory is nearly full, pause and go store items
+                    if (this._isInventoryFull() && this.skills) {
+                        console.log('[Brain] 📦 Inventory nearly full — auto-storing items...');
+                        this._addEvent('📦 Inventory full → storing items');
+                        await this.skills.storeItems(this);
+                    }
                 } catch (e) {
                     console.warn(`[Brain] dig failed: ${e.message}`);
                     break;
@@ -1217,7 +1407,7 @@ Respond with ONLY this JSON:
             console.warn(`[Brain] ⚠️ Dug ${mined} blocks but gained NOTHING — items may have fallen or despawned`);
             this._addEvent(`⚠️ Mined ${mined}× ${blockNameFragment} but items lost`);
         } else {
-            console.log(`[Brain] ❌ Couldn't find any "${blockNameFragment}" after ${MAX_EXPLORE_ATTEMPTS} exploration attempts`);
+            console.log(`[Brain] ❌ Couldn't find any "${blockNameFragment}" after ${MAX_LEGS} exploration legs`);
         }
         return mined;
     }
@@ -1336,34 +1526,38 @@ Respond with ONLY this JSON:
         // the full route and naturally avoids cliffs, water, lava
         if (this.bot.pathfinder) {
             try {
-                // Cave avoidance: restrict pathfinder if no pickaxe
+                // Restrict pathfinder to prevent digging straight down
                 const hasPickaxe = this.bot.inventory.items().some(i => i.name.includes('_pickaxe'));
-                const hasTorches = this.bot.inventory.items().some(i => i.name === 'torch');
                 const movements = this.bot.pathfinder.movements;
                 if (movements) {
-                    if (!hasPickaxe) {
-                        // No pickaxe = don't dig, don't drop into caves
-                        movements.canDig = false;
-                        movements.maxDropDown = 3;     // max 3 block drop (no cave diving)
-                    } else {
-                        movements.canDig = true;
-                        movements.maxDropDown = hasTorches ? 256 : 4;  // with torches = can go deep
-                    }
+                    // Only allow digging through blocks if the bot has a pickaxe.
+                    // Without a pickaxe it would dig with whatever it's holding (saplings, food, etc.)
+                    movements.canDig = hasPickaxe;
+                    // Keep maxDropDown low — we never want the pathfinder to dig/fall
+                    // straight down into caves or through the ground
+                    movements.maxDropDown = 3;
                 }
-
                 const { GoalNear } = require('mineflayer-pathfinder').goals;
                 this.bot.pathfinder.setGoal(new GoalNear(x, y, z, range));
                 // Timeout scales with distance
                 const timeoutMs = Math.min(Math.max(dist * 1000, 5000), 30000);
                 await new Promise((resolve) => {
+                    const cleanup = () => {
+                        clearTimeout(timeout);
+                        this.bot.removeListener('goal_reached', onGoal);
+                        this.bot.removeListener('path_update', onPathUpdate);
+                    };
+                    const onGoal = () => { cleanup(); resolve(); };
+                    const onPathUpdate = (r) => {
+                        if (r.status === 'noPath') { cleanup(); resolve(); }
+                    };
                     const timeout = setTimeout(() => {
+                        cleanup();
                         try { this.bot.pathfinder.setGoal(null); } catch { }
                         resolve();
                     }, timeoutMs);
-                    this.bot.once('goal_reached', () => { clearTimeout(timeout); resolve(); });
-                    this.bot.once('path_update', (r) => {
-                        if (r.status === 'noPath') { clearTimeout(timeout); resolve(); }
-                    });
+                    this.bot.once('goal_reached', onGoal);
+                    this.bot.once('path_update', onPathUpdate);
                 });
                 return;
             } catch (e) {
@@ -1680,19 +1874,33 @@ Respond with ONLY this JSON:
                 craftCount = Math.min(Math.max(1, Math.floor(plankCount / 2)), 4); // cap at 4 batches (16 sticks)
             }
 
+            // ── Snapshot inventory BEFORE crafting to verify it actually worked ──
+            const invBefore = liveCounts();
+
             // Validate we can actually craft this many
             const maxRecipes = this.bot.recipesFor(itemData.id, null, craftCount, craftingTableBlock || null);
             if (maxRecipes && maxRecipes.length > 0) {
                 await this.bot.craft(maxRecipes[0], craftCount, craftingTableBlock || null);
-                console.log(`[Brain] ✅ Crafted: ${craftCount}× ${itemName}`);
-                this._addEvent(`🔨 Crafted ${craftCount}× ${itemName}`);
             } else {
                 // Fall back to crafting 1
                 await this.bot.craft(recipes[0], 1, craftingTableBlock || null);
-                console.log(`[Brain] ✅ Crafted: 1× ${itemName}`);
-                this._addEvent(`🔨 Crafted ${itemName}`);
             }
-            this._lastCraftFailed = false;
+
+            // ── Verify inventory actually changed ──
+            const invAfter = liveCounts();
+            const gained = (invAfter[itemName] || 0) - (invBefore[itemName] || 0);
+
+            if (gained > 0) {
+                console.log(`[Brain] ✅ Crafted: ${gained}× ${itemName} (verified)`);
+                this._addEvent(`🔨 Crafted ${gained}× ${itemName}`);
+                this._lastCraftFailed = false;
+            } else {
+                // bot.craft() resolved but nothing was actually created
+                console.warn(`[Brain] ⚠️ Craft appeared to succeed but inventory unchanged for ${itemName}`);
+                this._addEvent(`❌ Craft failed: ${itemName} (nothing created)`);
+                this._lastCraftFailed = true;
+                this._craftCooldownUntil = Date.now() + 15_000;
+            }
         } catch (e) {
             console.warn(`[Brain] Craft error for ${itemName}: ${e.message}`);
             this._lastCraftFailed = true;
@@ -1742,6 +1950,16 @@ Respond with ONLY this JSON:
             inv[item.name] = (inv[item.name] || 0) + item.count;
         }
         return inv;
+    }
+
+    /**
+     * Check if inventory is nearly full (3 or fewer empty slots).
+     * Main inventory is slots 9-44 (36 slots total).
+     */
+    _isInventoryFull() {
+        const mainSlots = this.bot.inventory.slots.slice(9, 45); // main inventory
+        const emptySlots = mainSlots.filter(s => s === null).length;
+        return emptySlots <= 3;
     }
 
     _readWorldStats() {

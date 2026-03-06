@@ -1,14 +1,14 @@
 {
   "mastery": {
     "mine_wood": {
-      "successes": 41,
-      "failures": 52,
-      "attempts": 93
+      "successes": 62,
+      "failures": 54,
+      "attempts": 116
     },
     "craft": {
-      "successes": 48,
-      "failures": 0,
-      "attempts": 48
+      "successes": 84,
+      "failures": 2,
+      "attempts": 86
     },
     "attack_mob": {
       "successes": 13,
@@ -26,21 +26,26 @@
       "attempts": 3
     },
     "mine_stone": {
-      "successes": 5,
+      "successes": 17,
       "failures": 0,
-      "attempts": 5
+      "attempts": 17
     },
     "upgrade_tools": {
-      "successes": 1,
+      "successes": 12,
       "failures": 0,
-      "attempts": 1
+      "attempts": 12
     },
     "use_skill": {
+      "successes": 3,
+      "failures": 0,
+      "attempts": 3
+    },
+    "eat": {
       "successes": 1,
       "failures": 0,
       "attempts": 1
     }
   },
   "completed": [],
-  "lastUpdated": "2026-03-06T01:22:49.734Z"
+  "lastUpdated": "2026-03-06T22:20:20.501Z"
 }
