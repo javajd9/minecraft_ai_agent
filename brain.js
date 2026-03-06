@@ -32,6 +32,7 @@ const { GoalTracker } = require('./goals');
 const { SkillLibrary } = require('./skills');
 const { SkillManager } = require('./skill_manager');
 const { Curriculum } = require('./curriculum');
+const { RecipePlanner } = require('./planner');
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -86,6 +87,7 @@ class AgentBrain {
         this.skills = null;                      // initialized after bot spawns
         this.navigator = new ReactiveNavigator(bot);
         this.skillManager = null;  // initialized after bot spawns (needs navigator)
+        this.planner = null;       // initialized after bot spawns (needs registry)
 
         // Task commitment — prevents flip-flopping between actions
         this._currentTask = null;      // { action, target, startedAt, lockedUntil }
@@ -126,6 +128,7 @@ class AgentBrain {
         // Initialize game knowledge and skills (needs bot.registry to be loaded)
         this.gameKnowledge = new GameKnowledge(this.bot);
         this.skills = new SkillLibrary(this.bot, this.gameKnowledge);
+        this.planner = new RecipePlanner(this.bot);
 
         // Load pathfinder plugin into the bot
         this.bot.loadPlugin(pathfinder);
@@ -332,11 +335,15 @@ class AgentBrain {
             this.experience.beginAction(action, target, this.bot);
             const invBefore = this._readInventory();
 
-            const lockMs = { mine_wood: 25000, craft: 10000, explore: 15000, build_shelter: 40000, seek_food: 20000, attack_mob: 15000 }[action] || 10000;
+            const lockMs = { mine_wood: 120000, mine_stone: 120000, mine_iron: 120000, mine_coal: 60000, mine_diamond: 60000, craft: 15000, explore: 30000, build_shelter: 60000, seek_food: 30000, attack_mob: 20000 }[action] || 15000;
             this._currentTask = { action, target, startedAt: Date.now(), lockedUntil: Date.now() + lockMs };
             console.log(`[Brain] ⚙️  Action: ${action} (🔒 ${lockMs / 1000}s)`);
 
             await this._executeAction(action, target);
+
+            // ── Action finished — clear the lock so we can think again ──
+            this._currentTask = null;
+
 
             // Record outcome — compare inventory before/after
             const invAfter = this._readInventory();
@@ -378,7 +385,8 @@ class AgentBrain {
     }
 
     /**
-     * Deterministic action selector based on current milestone.
+     * Smart action selector — uses RecipePlanner for craftable/minable goals,
+     * falls back to skills for non-plannable milestones.
      * Returns { action, target, reason } or null if all milestones done.
      */
     _getGoalAction() {
@@ -388,140 +396,115 @@ class AgentBrain {
 
         if (!milestone) return null; // all milestones done!
 
-        // Count resources
-        const logCount = Object.entries(inv).filter(([k]) => k.includes('_log')).reduce((s, [, v]) => s + v, 0);
-        const plankCount = Object.entries(inv).filter(([k]) => k.includes('_planks')).reduce((s, [, v]) => s + v, 0);
-        const stickCount = inv.stick || 0;
-        const tableCount = inv.crafting_table || 0;
-        const cobble = inv.cobblestone || 0;
-        const coal = inv.coal || 0;
-        const rawIron = inv.raw_iron || 0;
-        const ironIngot = inv.iron_ingot || 0;
-        const diamond = inv.diamond || 0;
-
-        switch (milestone.id) {
-            // ── PHASE 1: WOOD ──────────────────────────────
-            case 'get_wood':
-                return { action: 'mine_wood', target: 'log', reason: `Gathering wood (have ${logCount} logs, need 8)` };
-
-            case 'craft_basics':
-                if (logCount >= 1 && plankCount < 8)
-                    return { action: 'craft', target: 'planks', reason: `Crafting planks (have ${plankCount}, need 8)` };
-                if (plankCount >= 2 && stickCount < 4)
-                    return { action: 'craft', target: 'stick', reason: `Crafting sticks (have ${stickCount}, need 4)` };
-                return { action: 'mine_wood', target: 'log', reason: 'Need more logs for planks & sticks' };
-
-            case 'crafting_table':
-                if (plankCount >= 4)
-                    return { action: 'craft', target: 'crafting_table', reason: 'Crafting table for tools' };
-                if (logCount >= 1)
-                    return { action: 'craft', target: 'planks', reason: 'Need planks for crafting table' };
-                return { action: 'mine_wood', target: 'log', reason: 'Need wood for crafting table' };
-
-            case 'full_wooden_tools':
-                if (tableCount < 1 && plankCount >= 4)
-                    return { action: 'craft', target: 'crafting_table', reason: 'Crafting table for tools' };
-                if (!inv.wooden_pickaxe) return { action: 'craft', target: 'wooden_pickaxe', reason: 'Crafting wooden pickaxe' };
-                if (!inv.wooden_axe) return { action: 'craft', target: 'wooden_axe', reason: 'Crafting wooden axe' };
-                if (!inv.wooden_sword) return { action: 'craft', target: 'wooden_sword', reason: 'Crafting wooden sword' };
-                if (!inv.wooden_shovel) return { action: 'craft', target: 'wooden_shovel', reason: 'Crafting wooden shovel' };
-                if (plankCount < 4) return { action: 'craft', target: 'planks', reason: 'Need planks for tools' };
-                if (stickCount < 2) return { action: 'craft', target: 'stick', reason: 'Need sticks for tools' };
-                return { action: 'mine_wood', target: 'log', reason: 'Need more wood for tools' };
-
-            // ── PHASE 2: STONE ─────────────────────────────
-            case 'mine_stone':
-                return { action: 'mine_stone', target: 'cobblestone', reason: `Mining cobblestone (have ${cobble}, need 16)` };
-
-            case 'stone_tools':
-                return { action: 'upgrade_tools', target: 'stone', reason: 'Upgrading to stone tools' };
-
-            case 'build_shelter':
-                if (cobble + plankCount < 20)
+        // ── Non-plannable milestones: use skills/SkillManager directly ──
+        const SKILL_MILESTONES = {
+            'build_shelter': () => {
+                const cobble = inv.cobblestone || 0;
+                const planks = Object.entries(inv).filter(([k]) => k.includes('_planks')).reduce((s, [, v]) => s + v, 0);
+                if (cobble + planks < 20)
                     return { action: 'mine_stone', target: 'cobblestone', reason: 'Need more blocks for shelter' };
                 return { action: 'build_shelter', target: '', reason: 'Building shelter' };
-
-            // ── PHASE 3: COAL & TORCHES ────────────────────
-            case 'mine_coal':
-                return { action: 'mine_coal', target: 'coal_ore', reason: `Mining coal (have ${coal}, need 8)` };
-
-            case 'craft_torches':
-                if (coal >= 1 && stickCount >= 1)
-                    return { action: 'craft', target: 'torch', reason: 'Crafting torches' };
-                if (stickCount < 1)
-                    return { action: 'craft', target: 'stick', reason: 'Need sticks for torches' };
-                return { action: 'mine_coal', target: 'coal_ore', reason: 'Need coal for torches' };
-
-            case 'furnace':
-                if (cobble >= 8)
-                    return { action: 'craft', target: 'furnace', reason: 'Crafting furnace' };
-                return { action: 'mine_stone', target: 'cobblestone', reason: `Need cobblestone for furnace (have ${cobble}, need 8)` };
-
-            case 'cook_food':
-                return { action: 'smelt', target: 'food', reason: 'Cooking food in furnace' };
-
-            // ── PHASE 4: IRON ──────────────────────────────
-            case 'mine_iron':
-                return { action: 'mine_iron', target: 'iron_ore', reason: `Mining iron ore (have ${rawIron + ironIngot}, need 12)` };
-
-            case 'smelt_iron':
-                return { action: 'smelt', target: 'raw_iron', reason: `Smelting iron (have ${rawIron} raw, ${ironIngot} ingots)` };
-
-            case 'iron_tools':
-                return { action: 'upgrade_tools', target: 'iron', reason: 'Crafting iron tools' };
-
-            case 'iron_armor':
-                if (ironIngot >= 24)
-                    return { action: 'craft', target: 'iron_armor', reason: 'Crafting iron armor set' };
-                return { action: 'mine_iron', target: 'iron_ore', reason: `Need more iron for armor (have ${ironIngot} ingots, need 24)` };
-
-            case 'shield':
-                if (ironIngot >= 1 && plankCount >= 6)
-                    return { action: 'craft', target: 'shield', reason: 'Crafting shield' };
-                if (ironIngot < 1)
-                    return { action: 'mine_iron', target: 'iron_ore', reason: 'Need iron for shield' };
-                return { action: 'mine_wood', target: 'log', reason: 'Need planks for shield' };
-
-            case 'bucket':
-                if (ironIngot >= 3)
-                    return { action: 'craft', target: 'bucket', reason: 'Crafting bucket' };
-                return { action: 'mine_iron', target: 'iron_ore', reason: 'Need iron for bucket' };
-
-            // ── PHASE 5: FOOD ──────────────────────────────
-            case 'get_seeds':
-                return { action: 'seek_food', target: 'seeds', reason: 'Collecting wheat seeds' };
-
-            case 'start_farm':
-                return { action: 'use_skill', target: 'start a wheat farm near water', reason: 'Starting farm' };
-
-            case 'bread':
+            },
+            'cook_food': () => ({ action: 'smelt', target: 'food', reason: 'Cooking food in furnace' }),
+            'get_seeds': () => ({ action: 'seek_food', target: 'seeds', reason: 'Collecting wheat seeds' }),
+            'start_farm': () => ({ action: 'use_skill', target: 'start a wheat farm near water', reason: 'Starting farm' }),
+            'bread': () => {
                 if (inv.wheat >= 3)
                     return { action: 'craft', target: 'bread', reason: 'Crafting bread' };
                 return { action: 'use_skill', target: 'harvest wheat from farm', reason: 'Harvesting wheat for bread' };
+            },
+        };
 
-            // ── PHASE 6: DIAMOND ───────────────────────────
-            case 'mine_diamond':
-                return { action: 'mine_diamond', target: 'diamond_ore', reason: `Mining diamonds at Y=11 (have ${diamond}, need 3)` };
-
-            case 'diamond_tools':
-                if (diamond >= 2 && stickCount >= 1)
-                    return { action: 'craft', target: 'diamond_pickaxe', reason: 'Crafting diamond pickaxe' };
-                if (diamond >= 2)
-                    return { action: 'craft', target: 'diamond_sword', reason: 'Crafting diamond sword' };
-                return { action: 'mine_diamond', target: 'diamond_ore', reason: 'Need more diamonds' };
-
-            case 'enchanting_table':
-                return { action: 'use_skill', target: 'craft an enchanting table', reason: 'Crafting enchanting table' };
-
-            // ── PHASE 7-8: NETHER & END (all via SkillManager) ──
-            default:
-                // For advanced milestones, let the SkillManager handle it
-                return {
-                    action: 'use_skill',
-                    target: milestone.description,
-                    reason: `${milestone.name}: ${milestone.description}`
-                };
+        if (SKILL_MILESTONES[milestone.id]) {
+            return SKILL_MILESTONES[milestone.id]();
         }
+
+        // ── Milestone → target item mapping ─────────────────────────────
+        // Maps milestone IDs to the item the planner should resolve
+        const MILESTONE_TARGETS = {
+            'get_wood': { item: 'oak_log', count: 8 },
+            'craft_basics': { item: 'stick', count: 4 },
+            'crafting_table': { item: 'crafting_table', count: 1 },
+            'full_wooden_tools': { items: ['wooden_pickaxe', 'wooden_axe', 'wooden_sword', 'wooden_shovel'] },
+            'mine_stone': { item: 'cobblestone', count: 16 },
+            'stone_tools': { action: 'upgrade_tools', target: 'stone', reason: 'Upgrading to stone tools' },
+            'mine_coal': { item: 'coal', count: 8 },
+            'craft_torches': { item: 'torch', count: 4 },
+            'furnace': { item: 'furnace', count: 1 },
+            'mine_iron': { item: 'raw_iron', count: 12 },
+            'smelt_iron': { item: 'iron_ingot', count: 12 },
+            'iron_tools': { action: 'upgrade_tools', target: 'iron', reason: 'Crafting iron tools' },
+            'iron_armor': { items: ['iron_helmet', 'iron_chestplate', 'iron_leggings', 'iron_boots'] },
+            'shield': { item: 'shield', count: 1 },
+            'bucket': { item: 'bucket', count: 1 },
+            'mine_diamond': { item: 'diamond', count: 3 },
+            'diamond_tools': { items: ['diamond_pickaxe', 'diamond_sword'] },
+            'enchanting_table': { item: 'enchanting_table', count: 1 },
+        };
+
+        const target = MILESTONE_TARGETS[milestone.id];
+
+        // Direct action milestones (upgrade_tools, etc.)
+        if (target && target.action) {
+            return { action: target.action, target: target.target, reason: target.reason };
+        }
+
+        // ── Use the RecipePlanner for item-based milestones ─────────────
+        if (this.planner && target) {
+            // Multi-item milestones (tools, armor sets)
+            if (target.items) {
+                for (const itemName of target.items) {
+                    if (!inv[itemName]) {
+                        const plan = this.planner.planFor(itemName, 1);
+                        if (plan.length > 0) {
+                            const step = this.planner.getNextStep();
+                            if (step) {
+                                console.log(`[Planner] 📋 ${this.planner.getPlanSummary()}`);
+                                return this.planner.stepToAction(step);
+                            }
+                        }
+                    }
+                }
+                // If all items are owned, the milestone should be complete
+                return { action: 'craft', target: target.items[0], reason: 'Finishing tool set' };
+            }
+
+            // Single-item milestones
+            if (target.item) {
+                const have = this._countItemWild(inv, target.item);
+                const need = target.count || 1;
+
+                if (have < need) {
+                    const plan = this.planner.planFor(target.item, need);
+                    if (plan.length > 0) {
+                        const step = this.planner.getNextStep();
+                        if (step) {
+                            console.log(`[Planner] 📋 ${this.planner.getPlanSummary()}`);
+                            return this.planner.stepToAction(step);
+                        }
+                    }
+                }
+            }
+        }
+
+        // ── Fallback: use SkillManager for advanced milestones ──────────
+        return {
+            action: 'use_skill',
+            target: milestone.description,
+            reason: `${milestone.name}: ${milestone.description}`
+        };
+    }
+
+    /** Count items with wildcard matching (any log type, any plank type) */
+    _countItemWild(inv, itemName) {
+        if (inv[itemName]) return inv[itemName];
+        if (itemName === 'oak_log' || itemName === 'log') {
+            return Object.entries(inv).filter(([k]) => k.includes('_log')).reduce((s, [, v]) => s + v, 0);
+        }
+        if (itemName === 'oak_planks' || itemName === 'planks') {
+            return Object.entries(inv).filter(([k]) => k.includes('_planks')).reduce((s, [, v]) => s + v, 0);
+        }
+        return 0;
     }
 
 
@@ -551,65 +534,69 @@ class AgentBrain {
             : 'unknown';
 
         const reply = this.pendingReply
-            ? `\nIMPORTANT: ${this.pendingReply.username} just said: "${this.pendingReply.message}". Address them directly in your chat.`
+            ? `\n⚡ ${this.pendingReply.username} said: "${this.pendingReply.message}" — reply in chat!`
             : '';
         this.pendingReply = null;
 
-        return `You are ${this.config.botUsername}, a Minecraft survival agent.
+        // Time of day (0=dawn 6000=noon 12000=dusk 18000=midnight)
+        const time = this.bot.time?.timeOfDay ?? 0;
+        let timeLabel;
+        if (time < 1000) timeLabel = '🌅 Dawn (safe)';
+        else if (time < 11000) timeLabel = '☀️ Day (safe)';
+        else if (time < 13000) timeLabel = '🌆 Dusk (get safe soon!)';
+        else timeLabel = '🌙 NIGHT — mobs spawning! Seek shelter, fight, or sleep!';
 
-IDENTITY: ${this.memory.identity}
-PERSONALITY: ${this.memory.personality}
+        // Active plan from RecipePlanner
+        const planInfo = this.planner?.hasPlan()
+            ? `ACTIVE PLAN: ${this.planner.getPlanSummary()}`
+            : '';
 
-STATUS:
-  Position: ${posStr} | Health: ${health}/20 | Food: ${food}/20
-  Inventory: ${JSON.stringify(inventory)}
-  Current goal: ${this.memory.currentGoal}
-  Sessions: ${this.memory.sessionCount} | Lifetime blocks explored: ${this._readWorldStats().totalBlocks}
+        // Compact inventory
+        const invStr = Object.entries(inventory)
+            .map(([k, v]) => `${k}×${v}`)
+            .join(', ') || 'empty';
 
-WHAT YOU NOTICED THIS SESSION:
-${this.memory.shortTermMemory.slice(-6).map(m => '  ' + m).join('\n') || '  Nothing yet — just spawned.'}
+        // Recent memories (last 4, keep it tight)
+        const memories = this.memory.shortTermMemory.slice(-4)
+            .map(m => '  ' + m).join('\n') || '  Nothing yet.';
 
-SESSION DISCOVERIES: ${Object.keys(this.memory.knownLocations).length > 0 ? JSON.stringify(this.memory.knownLocations) : 'None yet — explore to find resources!'}
+        // Gameplay knowledge (last 4)
+        const knowledge = (this.memory.gameplayKnowledge || []).slice(-4)
+            .map(k => '  • ' + k).join('\n') || '  None yet.';
 
-GAMEPLAY KNOWLEDGE (facts that work on ANY map):
-${(this.memory.gameplayKnowledge || []).slice(-8).map(k => '  • ' + k).join('\n') || '  None yet — learn by playing!'}
+        return `You are ${this.config.botUsername}, a Minecraft survival AI.
+
+PRIORITY RULES (follow in order):
+  1. DANGER: health < 10 → eat food or flee. Always.
+  2. HUNGER: food < 14 → eat if you have food.
+  3. NIGHT: if night, build shelter / sleep / place torches. Don't explore in the dark.
+  4. GOAL: follow the survival progression below.
+  5. EXPLORE: if stuck or nothing to do, explore new areas.
+
+STATUS: ${posStr} | ❤️ ${health}/20 | 🍖 ${food}/20 | ${timeLabel}
+INVENTORY: ${invStr}
+${planInfo}
 ${reply}
 
 ${vision}
 
-SURVIVAL PROGRESSION (follow this tech tree — do the 👉 step):
+PROGRESSION (do the 👉 step):
 ${this.goals.getProgressForPrompt(this.bot, this._readInventory(), this.memory)}
 
-RECENT EXPERIENCES:
-${this.experience.getRecentForPrompt(5)}
+RECENT NOTES:
+${memories}
 
-LEARNED STRATEGIES:
-${this.strategy.getLessonsForPrompt(3)}
+TIPS:
+${knowledge}
 
-SKILL MASTERY (how good you are at each action):
-${this.curriculum.getMasteryForPrompt()}
+ACTIONS: ${this.skills.getSkillList().map(s => s.split('—')[0].trim()).join(', ')}, use_skill
 
-AVAILABLE ACTIONS:
-${this.skills.getSkillList().map(s => '  ' + s).join('\n')}
-  use_skill      \u2014 write & run custom code for any task (action_target = task description)
-
-SAVED SKILLS (reusable code):
-${this.skillManager ? this.skillManager.getSkillList() : '  None yet.'}
-
-YOUR TASK: Follow the SURVIVAL PROGRESSION above. Do the 👉 step.
-Pick ONE action and commit to it fully. You will be locked in for 15-25 seconds.
-If hungry (food < 14), eat first. If health < 10, flee or eat. At night, seek shelter or sleep.
-If PATH OBSTRUCTIONS shows blocks in your way, mine through them before trying to move (equip the right tool first).
-
-Respond with ONLY valid JSON:
+Respond with ONLY this JSON:
 {
-  "thought": "<why you chose this action based on progression and what you see>",
-  "chat": "",
-  "goal": "<your current survival goal>",
-  "memory": "<one tactical note about THIS session, or empty string>",
-  "knowledge": "<one map-independent gameplay fact you learned, or empty string>",
-  "action": "<one of the available actions listed above>",
-  "action_target": "<for go_to_location: x,y,z. For mine_*: block name. Usually empty.>"
+  "thought": "<1 sentence: why this action>",
+  "action": "<one action name>",
+  "action_target": "<target if needed, usually empty>",
+  "chat": "<say something short or empty>"
 }`;
     }
 
@@ -651,228 +638,16 @@ Respond with ONLY valid JSON:
         });
     }
 
-    // ── Response processor ────────────────────────────────────────────────────
-
-    async _processResponse(rawText) {
-        // Extract JSON from the LLM response (it might have surrounding text)
-        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            console.warn('[Brain] Could not find JSON in LLM response:', rawText.slice(0, 200));
-            return;
-        }
-
-        let resp;
-        try {
-            resp = JSON.parse(jsonMatch[0]);
-        } catch (e) {
-            console.warn('[Brain] Invalid JSON from LLM:', e.message);
-            return;
-        }
-
-        // ── Log internal thought (terminal only, never in-game chat) ─────────
-        if (resp.thought) {
-            console.log(`[Brain] 💭 ${resp.thought} `);
-        }
-
-        // ── Say something in chat (only when the bot has something real to say) ─
-        const chatMsg = (resp.chat || '').trim();
-        if (chatMsg && chatMsg.length > 2) {
-            const msg = chatMsg.slice(0, 256);
-            this.bot.chat(msg);
-            console.log(`[Brain] 💬 "${msg}"`);
-
-            // Log outgoing chat
-            fs.appendFileSync(CHAT_FILE, JSON.stringify({
-                t: new Date().toISOString(),
-                type: 'outgoing',
-                username: this.config.botUsername,
-                message: msg,
-            }) + '\n');
-        }
-
-        // ── Update goal ───────────────────────────────────────────────────────
-        if (resp.goal && resp.goal !== this.memory.currentGoal) {
-            console.log(`[Brain] 🎯 New goal: ${resp.goal} `);
-            this.memory.currentGoal = resp.goal;
-        }
-
-        // ── Store memory (session-scoped, with dedup and coordinate filtering) ──
-        if (resp.memory && resp.memory.trim()) {
-            const newMem = resp.memory.trim();
-            const newWords = newMem.toLowerCase().split(/\s+/);
-
-            // Filter out coordinate-heavy memories (useless on map change)
-            const coordTokens = newWords.filter(w => /^[-\d.,]+$/.test(w)).length;
-            const isCoordHeavy = coordTokens / newWords.length > 0.4;
-            if (isCoordHeavy) {
-                console.log('[Brain] 🧠 Skipped coordinate-heavy memory');
-            } else if (newWords.length >= 4) {
-                // Filter stopwords before overlap comparison to avoid false duplicates
-                const stopwords = new Set(['i', 'the', 'a', 'an', 'at', 'to', 'in', 'on', 'is', 'was', 'and', 'or', 'near', 'found', 'have', 'had', 'some', 'my', 'this', 'that']);
-                const contentWords = newWords.filter(w => !stopwords.has(w) && w.length > 2);
-
-                // Check overlap against last 5 memories (not just the last one)
-                const recent = this.memory.shortTermMemory.slice(-5);
-                const isDup = recent.some(old => {
-                    const oldWords = old.toLowerCase().split(/\s+/).filter(w => !stopwords.has(w) && w.length > 2);
-                    if (contentWords.length === 0 || oldWords.length === 0) return false;
-                    const overlap = contentWords.filter(w => oldWords.includes(w)).length;
-                    return overlap / contentWords.length >= 0.6;  // 60% overlap of content words
-                });
-
-                if (!isDup) {
-                    this.memory.shortTermMemory.push(`[${new Date().toLocaleTimeString()}] ${newMem} `);
-                    if (this.memory.shortTermMemory.length > 15) this.memory.shortTermMemory.shift();
-                    console.log(`[Brain] 🧠 Remembered: ${newMem} `);
-                } else {
-                    console.log(`[Brain] 🧠 Skipped duplicate memory`);
-                }
-            }
-        }
-
-        // ── Store gameplay knowledge (persistent across sessions/maps) ────────
-        if (resp.knowledge && resp.knowledge.trim() && resp.knowledge.trim().length > 10) {
-            const fact = resp.knowledge.trim();
-            const knowledge = this.memory.gameplayKnowledge || [];
-            // Dedup: skip if very similar to existing knowledge
-            const isDup = knowledge.some(existing => {
-                const existWords = new Set(existing.toLowerCase().split(/\s+/));
-                const newWords = fact.toLowerCase().split(/\s+/);
-                const overlap = newWords.filter(w => existWords.has(w)).length;
-                return overlap / newWords.length >= 0.7;
-            });
-            if (!isDup) {
-                knowledge.push(fact);
-                if (knowledge.length > 30) knowledge.shift(); // cap at 30 facts
-                this.memory.gameplayKnowledge = knowledge;
-                console.log(`[Brain] 📚 Learned: ${fact}`);
-            }
-        }
 
 
-        // ── Record spawn position (refreshes each session) ───────────────────
-        const pos = this.bot.entity?.position;
-        if (pos && !this.memory.knownLocations['spawn']) {
-            this.memory.knownLocations['spawn'] = [Math.round(pos.x), Math.round(pos.y), Math.round(pos.z)];
-        }
 
-        this._saveMemory();
 
-        // ── Execute action (with inventory overrides — only for critical situations) ──
-        // Sanitise: take first whitespace/pipe-delimited token only
-        let rawAction = String(resp.action || 'explore').split(/[\s|,]+/)[0].toLowerCase().trim();
-        const target = String(resp.action_target || '').trim();
 
-        // Only override for CRAFT when we have logs and no tools — this is survival-critical
-        const craftCooledDown = !this._craftCooldownUntil || Date.now() > this._craftCooldownUntil;
-        const inv0 = this._readInventory();
-        const logCount = ['oak', 'birch', 'spruce', 'jungle', 'acacia', 'dark_oak'].reduce((s, t) => s + (inv0[`${t}_log`] || 0), 0);
-        const hasPickaxe = Object.keys(inv0).some(k => k.includes('_pickaxe'));
-        const hasAxe = Object.keys(inv0).some(k => k.includes('_axe'));
-        const hasSword = Object.keys(inv0).some(k => k.includes('_sword'));
-        const toolsDone = hasPickaxe && hasAxe && hasSword;
 
-        if (logCount >= 4 && !toolsDone && craftCooledDown) {
-            console.log(`[Brain] 📦 Inventory override → craft(${logCount} logs, tools incomplete)`);
-            rawAction = 'craft';
-        }
 
-        // Block LLM-chosen craft if on cooldown to prevent re-entering broken loops
-        if (rawAction === 'craft' && !craftCooledDown) {
-            console.log('[Brain] 🔨 Craft on cooldown — exploring instead');
-            rawAction = 'explore';
-        }
-
-        // ── Task Commitment ─────────────────────────────────────────────────
-        // Lock into this action for a minimum duration so we don't flip-flop
-        const TASK_DURATIONS = {
-            mine_wood: 30000,    // 30s — time to walk + mine a few logs
-            mine_stone: 30000,
-            mine_iron: 35000,
-            seek_food: 30000,    // 30s — time to chase + kill an animal
-            craft: 15000,        // 15s — crafting is quick
-            explore: 25000,      // 25s — walk somewhere meaningful
-            attack_mob: 20000,
-            go_to_location: 25000,
-            build_shelter: 45000,
-            smelt: 30000,
-            idle: 10000,
-        };
-        const lockDuration = TASK_DURATIONS[rawAction] || 10000;
-        this._currentTask = {
-            action: rawAction,
-            target,
-            startedAt: Date.now(),
-            lockedUntil: Date.now() + lockDuration
-        };
-
-        console.log(`[Brain] ⚙️  Action: ${rawAction}${target ? ' → ' + target : ''} (🔒 locked for ${lockDuration / 1000}s)`);
-
-        // Track action outcome
-        this.experience.beginAction(rawAction, target, this.bot, this.memory.sessionCount);
-        const invBefore = this._readInventory();
-        const healthBefore = this.bot.health ?? 20;
-
-        await this._executeAction(rawAction, target);
-
-        // ── Honest Outcome Evaluation ────────────────────────────────────────
-        // Wait a small amount for world state to settle (e.g. items to land in inv)
-        await new Promise(r => setTimeout(r, 800));
-
-        const invAfter = this._readInventory();
-        const healthAfter = this.bot.health ?? 0;
-        let result = 'success';
-        let detail = `Completed ${rawAction} `;
-
-        if (healthAfter <= 0) {
-            result = 'death';
-            detail = 'Died during action';
-        } else if (healthAfter < healthBefore - 5) {
-            result = 'fail';
-            detail = 'Took significant damage';
-        } else {
-            // Action-specific success checks
-            switch (rawAction) {
-                case 'mine_wood':
-                case 'mine_stone':
-                case 'mine_iron': {
-                    const logsBefore = Object.entries(invBefore).filter(([k]) => k.includes('log') || k.includes('stone') || k.includes('ore')).reduce((s, [, v]) => s + v, 0);
-                    const logsAfter = Object.entries(invAfter).filter(([k]) => k.includes('log') || k.includes('stone') || k.includes('ore')).reduce((s, [, v]) => s + v, 0);
-                    if (logsAfter <= logsBefore) {
-                        result = 'fail';
-                        detail = 'No resources gathered';
-                    }
-                    break;
-                }
-                case 'seek_food': {
-                    const foodBefore = Object.entries(invBefore).filter(([k]) => k.includes('raw_') || k.includes('cooked_')).reduce((s, [, v]) => s + v, 0);
-                    const foodAfter = Object.entries(invAfter).filter(([k]) => k.includes('raw_') || k.includes('cooked_')).reduce((s, [, v]) => s + v, 0);
-                    if (foodAfter <= foodBefore) {
-                        result = 'fail';
-                        detail = 'No food gathered';
-                    }
-                    break;
-                }
-                case 'craft': {
-                    const itemsBefore = Object.keys(invBefore).length;
-                    const itemsAfter = Object.keys(invAfter).length;
-                    // If target was auto, just check if anything was lost/gained
-                    if (itemsAfter === itemsBefore && Object.keys(invBefore).every(k => invBefore[k] === invAfter[k])) {
-                        result = 'fail';
-                        detail = 'Crafting failed or no materials';
-                    }
-                    break;
-                }
-            }
-        }
-
-        const exp = this.experience.endAction(result, detail, this.bot);
-        if (exp) {
-            this.strategy.recordOutcome(rawAction, result, exp.context);
-        }
-    }
 
     // ── Action executor ────────────────────────────────────────────────────────
+
 
     async _executeAction(action, target) {
         this._stopMovement();
@@ -881,12 +656,8 @@ Respond with ONLY valid JSON:
                 // ── Original actions ──────────────────────────────
                 case 'mine_wood': {
                     const woodTarget = (target && !target.match(/[-\d,\[\]]/)) ? target : 'log';
-                    const mined = await this._mineNearestBlock(woodTarget, 64);
-                    if (!mined) {
-                        console.log('[Brain] 🪵 No wood nearby — exploring to find trees');
-                        this._addEvent('🪵 No trees found nearby — exploring');
-                        await this._exploreRandomly();
-                    }
+                    await this._mineNearestBlock(woodTarget, 64);
+                    // No redundant explore — _mineNearestBlock already walks 300 blocks
                     break;
                 }
                 case 'mine_stone':
@@ -915,17 +686,13 @@ Respond with ONLY valid JSON:
                         await this._huntEntity(food);
                     } else {
                         console.log('[Brain] No huntable food nearby — exploring');
-                        this._exploreRandomly();
+                        await this._exploreRandomly();
                     }
                     break;
                 }
                 case 'craft': {
-                    const VALID_CRAFT = new Set(['planks', 'crafting_table', 'stick',
-                        'wooden_pickaxe', 'wooden_axe', 'wooden_sword', 'wooden_shovel',
-                        'stone_pickaxe', 'stone_axe', 'stone_sword', 'furnace',
-                        'torch', 'chest', 'auto']);
-                    const craftTarget = VALID_CRAFT.has(target) ? target : 'auto';
-                    await this._craftItem(craftTarget);
+                    // No whitelist — let the planner and _craftItem handle validation
+                    await this._craftItem(target || 'auto');
                     break;
                 }
                 case 'attack_mob': {
@@ -1037,7 +804,7 @@ Respond with ONLY valid JSON:
         const pos = this.bot.entity?.position;
         if (!pos) return;
         const { angle, label } = this._pickUnexploredDirection();
-        const dist = 30 + Math.random() * 20;
+        const dist = 80 + Math.random() * 40;
         const tx = Math.round(pos.x + Math.cos(angle) * dist);
         const tz = Math.round(pos.z + Math.sin(angle) * dist);
         console.log(`[Brain] 🧭 Exploring ${label} (${Math.round(dist)}b)`);
@@ -1322,6 +1089,12 @@ Respond with ONLY valid JSON:
         let mined = 0;
         let botPos = this.bot.entity.position;
 
+        // Snapshot inventory BEFORE mining to verify later
+        const invBeforeMining = {};
+        for (const item of this.bot.inventory.items()) {
+            invBeforeMining[item.name] = (invBeforeMining[item.name] || 0) + item.count;
+        }
+
         // Check memory for a known source location first
         const knownKey = `${blockNameFragment}_source`;
         if (this.memory.knownLocations[knownKey] && mined === 0) {
@@ -1332,15 +1105,32 @@ Respond with ONLY valid JSON:
                 console.log(`[Brain] 🗺️ Walking to remembered ${blockNameFragment} source at [${kx},${ky},${kz}] (${Math.round(distToKnown)}b away)`);
                 await this._navigateTo(kx, ky, kz, 5);
                 botPos = this.bot.entity.position;
+
+                // Check if resource still exists here — clear stale memory if not
+                const stillThere = this.bot.findBlock({
+                    matching: b => b.name.includes(blockNameFragment),
+                    maxDistance: 16,
+                });
+                if (!stillThere) {
+                    console.log(`[Brain] 🗑️ Resource depleted at remembered location — clearing memory`);
+                    delete this.memory.knownLocations[knownKey];
+                    this._saveMemory();
+                }
             }
         }
 
-        // Exploration loop: try to find blocks, explore further if none found
-        const MAX_EXPLORE_ATTEMPTS = 3;
+        // ── Persistent straight-line exploration ────────────────────────────
+        // Pick ONE direction and keep walking in legs until we find target blocks.
+        // Each leg = 60 blocks. Up to 5 legs = 300 blocks total.
+        const MAX_LEGS = 5;
+        const LEG_DISTANCE = 60;
+        const { angle: exploreAngle, label: exploreLabel } = this._pickUnexploredDirection();
+        this._lastExploreDir = exploreLabel;
 
-        for (let explore = 0; explore < MAX_EXPLORE_ATTEMPTS; explore++) {
+        for (let leg = 0; leg < MAX_LEGS; leg++) {
             botPos = this.bot.entity.position;
 
+            // Try to mine any target blocks visible from current position
             for (let i = mined; i < maxBlocks; i++) {
                 const candidates = this.bot.findBlocks({
                     matching: b => b.name.includes(blockNameFragment),
@@ -1349,7 +1139,7 @@ Respond with ONLY valid JSON:
                 }).filter(pos => Math.abs(pos.y - botPos.y) <= 6)
                     .sort((a, b) => a.distanceTo(botPos) - b.distanceTo(botPos));
 
-                if (candidates.length === 0) break; // no blocks here, go explore
+                if (candidates.length === 0) break;
 
                 const blockPos = candidates[0];
                 const block = this.bot.blockAt(blockPos);
@@ -1373,7 +1163,6 @@ Respond with ONLY valid JSON:
                     await this.bot.lookAt(blockPos.offset(0.5, 0.5, 0.5));
                     await this.bot.dig(freshBlock);
 
-                    // VERIFY the block is actually gone before claiming success
                     const verifyBlock = this.bot.blockAt(blockPos);
                     if (verifyBlock && verifyBlock.name === freshBlock.name) {
                         console.warn(`[Brain] ⚠️ dig() returned but block still there — skipping`);
@@ -1382,8 +1171,6 @@ Respond with ONLY valid JSON:
 
                     mined++;
                     console.log(`[Brain] ✅ Mined ${freshBlock.name} (${mined}/${maxBlocks})`);
-
-                    // Collect dropped items using entity tracking
                     await this._collectNearbyItems(blockPos, 6, 3000);
                 } catch (e) {
                     console.warn(`[Brain] dig failed: ${e.message}`);
@@ -1391,25 +1178,33 @@ Respond with ONLY valid JSON:
                 }
             }
 
-            // Did we get enough?
             if (mined >= maxBlocks) break;
 
-            // No blocks found — explore in an UNEXPLORED direction
-            if (explore < MAX_EXPLORE_ATTEMPTS - 1) {
-                const { angle, label } = this._pickUnexploredDirection();
-                const dist = 35 + Math.random() * 25;
+            // Walk another leg in the SAME direction
+            if (leg < MAX_LEGS - 1) {
                 const pos = this.bot.entity.position;
-                const tx = Math.round(pos.x + Math.cos(angle) * dist);
-                const tz = Math.round(pos.z + Math.sin(angle) * dist);
-                console.log(`[Brain] 🔍 No "${blockNameFragment}" nearby — exploring ${label} ${Math.round(dist)}b (attempt ${explore + 2}/${MAX_EXPLORE_ATTEMPTS})`);
-                this._addEvent(`🔍 Searched ${label} for ${blockNameFragment}`);
-                this._exploredDirs[label] = Date.now();
+                const tx = Math.round(pos.x + Math.cos(exploreAngle) * LEG_DISTANCE);
+                const tz = Math.round(pos.z + Math.sin(exploreAngle) * LEG_DISTANCE);
+                const totalDist = (leg + 1) * LEG_DISTANCE;
+                console.log(`[Brain] 🔍 No "${blockNameFragment}" — walking ${exploreLabel} (${totalDist}/${MAX_LEGS * LEG_DISTANCE}b)`);
+                this._exploredDirs[exploreLabel] = Date.now();
                 await this._navigateTo(tx, pos.y, tz, 5);
             }
         }
 
-        if (mined > 0) {
-            this._addEvent(`🪓 Mined ${mined}× ${blockNameFragment}`);
+        // VERIFY: compare inventory before/after to see what was ACTUALLY gained
+        const invAfterMining = {};
+        for (const item of this.bot.inventory.items()) {
+            invAfterMining[item.name] = (invAfterMining[item.name] || 0) + item.count;
+        }
+        const actualGains = [];
+        for (const [name, count] of Object.entries(invAfterMining)) {
+            const diff = count - (invBeforeMining[name] || 0);
+            if (diff > 0) actualGains.push(`${name}×${diff}`);
+        }
+
+        if (mined > 0 && actualGains.length > 0) {
+            this._addEvent(`🪓 Mined ${mined}× ${blockNameFragment} → gained: ${actualGains.join(', ')}`);
             const nearby = this.bot.findBlock({ matching: b => b.name.includes(blockNameFragment), maxDistance: 8 });
             if (nearby) {
                 this.memory.knownLocations[knownKey] = [
@@ -1418,6 +1213,9 @@ Respond with ONLY valid JSON:
                     Math.round(nearby.position.z),
                 ];
             }
+        } else if (mined > 0 && actualGains.length === 0) {
+            console.warn(`[Brain] ⚠️ Dug ${mined} blocks but gained NOTHING — items may have fallen or despawned`);
+            this._addEvent(`⚠️ Mined ${mined}× ${blockNameFragment} but items lost`);
         } else {
             console.log(`[Brain] ❌ Couldn't find any "${blockNameFragment}" after ${MAX_EXPLORE_ATTEMPTS} exploration attempts`);
         }
@@ -1426,7 +1224,7 @@ Respond with ONLY valid JSON:
 
     /**
      * Collect nearby dropped items by tracking item entities.
-     * Uses bot.entities to find actual dropped item positions instead of guessing.
+     * VERIFIES actual inventory changes — no false positives.
      * @param {Vec3} searchCenter - Where to look for items (usually where block was mined)
      * @param {number} radius - Max distance to search for items (default 6)
      * @param {number} timeoutMs - Max time to spend collecting (default 3000)
@@ -1436,34 +1234,34 @@ Respond with ONLY valid JSON:
         const pos = this.bot.entity?.position;
         if (!pos) return 0;
 
+        // Snapshot inventory BEFORE collection
+        const invBefore = {};
+        for (const item of this.bot.inventory.items()) {
+            invBefore[item.name] = (invBefore[item.name] || 0) + item.count;
+        }
+
         // Wait a moment for items to spawn after block break
-        await new Promise(r => setTimeout(r, 150));
+        await new Promise(r => setTimeout(r, 200));
 
-        let collected = 0;
-        const maxItems = 5; // don't chase too many items
+        const maxAttempts = 5;
 
-        for (let attempt = 0; attempt < maxItems && Date.now() < deadline; attempt++) {
+        for (let attempt = 0; attempt < maxAttempts && Date.now() < deadline; attempt++) {
             // Find all dropped item entities near the search center
             const droppedItems = Object.values(this.bot.entities)
                 .filter(e => {
                     if (!e || !e.position) return false;
-                    // Dropped items: check name, displayName, entityType, or type
-                    // In mineflayer, dropped items have name 'item' and metadata
                     if (e.name !== 'item' && e.displayName !== 'Item' &&
                         e.entityType !== 2 && e.type !== 'object') return false;
-                    // Check if within radius of search center
                     const dist = e.position.distanceTo(searchCenter);
                     return dist <= radius;
                 })
                 .sort((a, b) => {
-                    // Sort by distance to bot (pick up closest first)
                     const dA = a.position.distanceTo(this.bot.entity.position);
                     const dB = b.position.distanceTo(this.bot.entity.position);
                     return dA - dB;
                 });
 
             if (droppedItems.length === 0) {
-                // No items found — try waiting a bit in case they're still spawning
                 if (attempt === 0) {
                     await new Promise(r => setTimeout(r, 300));
                     continue;
@@ -1474,29 +1272,38 @@ Respond with ONLY valid JSON:
             const item = droppedItems[0];
             const itemDist = item.position.distanceTo(this.bot.entity.position);
 
-            // If close enough, just wait for auto-pickup
             if (itemDist <= 2.5) {
-                await new Promise(r => setTimeout(r, 300));
-                collected++;
-                continue;
+                // Close enough — wait for auto-pickup
+                await new Promise(r => setTimeout(r, 400));
+            } else {
+                // Walk to the item
+                try {
+                    await this.navigator.goTo(item.position, 1.5, Math.min(3000, deadline - Date.now()));
+                    await new Promise(r => setTimeout(r, 400)); // wait for pickup
+                } catch {
+                    break; // item despawned or unreachable
+                }
             }
+        }
 
-            // Walk to the item's actual position
-            const itemName = item.metadata?.[8]?.itemId || item.displayName || 'item';
-            console.log(`[Brain] 📥 Walking to dropped ${itemName} at [${Math.round(item.position.x)},${Math.round(item.position.y)},${Math.round(item.position.z)}] (${Math.round(itemDist)}b away)`);
+        // Snapshot inventory AFTER collection — count what ACTUALLY changed
+        const invAfter = {};
+        for (const item of this.bot.inventory.items()) {
+            invAfter[item.name] = (invAfter[item.name] || 0) + item.count;
+        }
 
-            try {
-                await this.navigator.goTo(item.position, 1.5, Math.min(3000, deadline - Date.now()));
-                await new Promise(r => setTimeout(r, 300)); // wait for pickup
-                collected++;
-            } catch {
-                // Item might have despawned or been picked up already
-                break;
+        let collected = 0;
+        const gained = [];
+        for (const [name, count] of Object.entries(invAfter)) {
+            const diff = count - (invBefore[name] || 0);
+            if (diff > 0) {
+                collected += diff;
+                gained.push(`${name}×${diff}`);
             }
         }
 
         if (collected > 0) {
-            console.log(`[Brain] 📥 Collected ${collected} dropped item(s)`);
+            console.log(`[Brain] 📥 Picked up: ${gained.join(', ')}`);
         }
         return collected;
     }
@@ -1529,6 +1336,21 @@ Respond with ONLY valid JSON:
         // the full route and naturally avoids cliffs, water, lava
         if (this.bot.pathfinder) {
             try {
+                // Cave avoidance: restrict pathfinder if no pickaxe
+                const hasPickaxe = this.bot.inventory.items().some(i => i.name.includes('_pickaxe'));
+                const hasTorches = this.bot.inventory.items().some(i => i.name === 'torch');
+                const movements = this.bot.pathfinder.movements;
+                if (movements) {
+                    if (!hasPickaxe) {
+                        // No pickaxe = don't dig, don't drop into caves
+                        movements.canDig = false;
+                        movements.maxDropDown = 3;     // max 3 block drop (no cave diving)
+                    } else {
+                        movements.canDig = true;
+                        movements.maxDropDown = hasTorches ? 256 : 4;  // with torches = can go deep
+                    }
+                }
+
                 const { GoalNear } = require('mineflayer-pathfinder').goals;
                 this.bot.pathfinder.setGoal(new GoalNear(x, y, z, range));
                 // Timeout scales with distance
@@ -1712,7 +1534,13 @@ Respond with ONLY valid JSON:
         // Inventory-only items (2x2 grid — no crafting table needed)
         const inventoryOnly = new Set(['planks', 'crafting_table', 'stick']);
         // Items that NEED a crafting table (3x3 grid)
-        const needsTableSet = new Set(['wooden_pickaxe', 'wooden_axe', 'wooden_sword', 'wooden_shovel', 'wooden_hoe', 'chest', 'furnace']);
+        // Items that NEED a crafting table (3x3 grid) — match by pattern, not hardcoded list
+        const needsTable = (name) => {
+            const TABLE_PATTERNS = ['_pickaxe', '_axe', '_sword', '_shovel', '_hoe',
+                '_helmet', '_chestplate', '_leggings', '_boots',
+                'shield', 'bucket', 'furnace', 'chest', 'shears'];
+            return TABLE_PATTERNS.some(p => name.includes(p));
+        };
 
         // Resolve the actual registry item name dynamically
         let itemName;
@@ -1726,7 +1554,7 @@ Respond with ONLY valid JSON:
 
         // Get or place crafting table if needed
         let craftingTableBlock = null;
-        if (needsTableSet.has(target)) {
+        if (needsTable(target)) {
             // 1. Check nearby (32 blocks)
             craftingTableBlock = this.bot.findBlock({ matching: b => b.name === 'crafting_table', maxDistance: 32 });
 
@@ -1817,17 +1645,17 @@ Respond with ONLY valid JSON:
                 // Recovery: go get what's missing instead of looping
                 if (target === 'planks') {
                     console.log('[Brain] 🔨 Recovery: need logs → mining wood');
-                    this._mineNearestBlock('log', 64).catch(() => { });
+                    await this._mineNearestBlock('log', 64);
                 } else if (target === 'crafting_table') {
                     console.log('[Brain] 🔨 Recovery: need 4 planks → crafting planks first');
                     await this._craftItem('planks', _depth + 1);
-                } else if (needsTableSet.has(target)) {
+                } else if (needsTable(target)) {
                     console.log('[Brain] 🔨 Recovery: need crafting table → crafting/placing one');
                     await this._craftItem('crafting_table', _depth + 1);
                 } else {
                     // Unknown failure — go explore/mine to find materials
                     console.log('[Brain] 🔨 Recovery: unknown missing material → going to mine wood');
-                    this._mineNearestBlock('log', 64).catch(() => { });
+                    await this._mineNearestBlock('log', 64);
                 }
                 this._craftCooldownUntil = Date.now() + 30_000; // backoff 30s
                 return;

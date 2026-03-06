@@ -3,23 +3,23 @@
     "mine_wood": {
       "contexts": {
         "biome:unknown": {
-          "success": 51,
-          "fail": 44,
+          "success": 65,
+          "fail": 56,
           "death": 0
         },
         "time:day": {
-          "success": 45,
-          "fail": 32,
+          "success": 53,
+          "fail": 42,
           "death": 0
         },
         "hasHostiles:0": {
-          "success": 48,
-          "fail": 44,
+          "success": 62,
+          "fail": 56,
           "death": 0
         },
         "equipped:none": {
-          "success": 43,
-          "fail": 42,
+          "success": 55,
+          "fail": 50,
           "death": 0
         },
         "equipped:stick": {
@@ -28,8 +28,8 @@
           "death": 0
         },
         "time:night": {
-          "success": 6,
-          "fail": 12,
+          "success": 12,
+          "fail": 14,
           "death": 0
         },
         "hasHostiles:1": {
@@ -56,30 +56,40 @@
           "success": 1,
           "fail": 0,
           "death": 0
+        },
+        "equipped:oak_log": {
+          "success": 2,
+          "fail": 2,
+          "death": 0
+        },
+        "equipped:oak_sapling": {
+          "success": 0,
+          "fail": 2,
+          "death": 0
         }
       },
-      "totalAttempts": 95,
-      "successCount": 51
+      "totalAttempts": 121,
+      "successCount": 65
     },
     "craft": {
       "contexts": {
         "biome:unknown": {
-          "success": 86,
+          "success": 97,
           "fail": 0,
           "death": 0
         },
         "time:day": {
-          "success": 69,
+          "success": 71,
           "fail": 0,
           "death": 0
         },
         "hasHostiles:0": {
-          "success": 82,
+          "success": 93,
           "fail": 0,
           "death": 0
         },
         "equipped:none": {
-          "success": 72,
+          "success": 80,
           "fail": 0,
           "death": 0
         },
@@ -104,7 +114,7 @@
           "death": 0
         },
         "time:night": {
-          "success": 17,
+          "success": 26,
           "fail": 0,
           "death": 0
         },
@@ -112,10 +122,15 @@
           "success": 1,
           "fail": 0,
           "death": 0
+        },
+        "equipped:oak_log": {
+          "success": 3,
+          "fail": 0,
+          "death": 0
         }
       },
-      "totalAttempts": 86,
-      "successCount": 86
+      "totalAttempts": 97,
+      "successCount": 97
     },
     "build_shelter": {
       "contexts": {
@@ -276,6 +291,32 @@
       },
       "totalAttempts": 1,
       "successCount": 1
+    },
+    "use_skill": {
+      "contexts": {
+        "biome:unknown": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "time:night": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "hasHostiles:0": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        },
+        "equipped:none": {
+          "success": 1,
+          "fail": 0,
+          "death": 0
+        }
+      },
+      "totalAttempts": 1,
+      "successCount": 1
     }
   },
   "lessons": [
@@ -304,5 +345,5 @@
       "confidence": 1
     }
   ],
-  "lastUpdated": "2026-03-05T19:42:15.025Z"
+  "lastUpdated": "2026-03-06T01:22:49.734Z"
 }

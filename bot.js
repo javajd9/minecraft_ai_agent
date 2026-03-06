@@ -77,7 +77,7 @@ function createBot(config) {
         startAt: 14,
         bannedFood: ['rotten_flesh', 'spider_eye', 'poisonous_potato', 'pufferfish'],
       };
-      bot.autoEat.enable();
+      bot.autoEat.enableAuto();
       console.log('[Bot] ✅ Auto-eat enabled (triggers at 14 food)');
     } catch (e) {
       console.warn('[Bot] Auto-eat init error:', e.message);

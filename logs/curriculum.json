@@ -1,14 +1,14 @@
 {
   "mastery": {
     "mine_wood": {
-      "successes": 27,
-      "failures": 38,
-      "attempts": 65
+      "successes": 41,
+      "failures": 52,
+      "attempts": 93
     },
     "craft": {
-      "successes": 37,
+      "successes": 48,
       "failures": 0,
-      "attempts": 37
+      "attempts": 48
     },
     "attack_mob": {
       "successes": 13,
@@ -34,8 +34,13 @@
       "successes": 1,
       "failures": 0,
       "attempts": 1
+    },
+    "use_skill": {
+      "successes": 1,
+      "failures": 0,
+      "attempts": 1
     }
   },
   "completed": [],
-  "lastUpdated": "2026-03-05T19:42:15.026Z"
+  "lastUpdated": "2026-03-06T01:22:49.734Z"
 }

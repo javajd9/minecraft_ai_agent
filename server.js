@@ -14,11 +14,31 @@
 
 'use strict';
 
+// ── Suppress known deprecation warnings from dependencies ─────────────────────
+// MUST be before any require() calls to catch punycode warnings
+process.noDeprecation = true;  // Suppresses DeprecationWarning output
+
+const _origWarn = console.warn;
+console.warn = (...args) => {
+    const msg = args[0]?.toString?.() || '';
+    if (msg.includes('physicTick')) return;        // mineflayer-pvp noise
+    if (msg.includes('punycode')) return;           // Node.js internal noise
+    _origWarn.apply(console, args);
+};
+
+
 const WebSocket = require('ws');
 const { createBot } = require('./bot');
 const config = require('./config.json');
 const logger = require('./logger');
 const { AgentBrain } = require('./brain');
+
+// ── Suppress PartialReadError spam (protodef/MC 1.21 noise — non-fatal) ───────
+process.on('uncaughtException', (err) => {
+    if (err.name === 'PartialReadError') return; // silence protocol noise
+    console.error('[Server] Uncaught:', err);
+    process.exit(1);
+});
 
 
 // ── Bot lifecycle ─────────────────────────────────────────────────────────────
